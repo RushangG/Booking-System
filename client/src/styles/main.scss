@@ -1,0 +1,24 @@
+$primary-color : #232422;
+$primary-background-color : #f5f5f5;
+body {
+    text-align: center;
+  font-family: 'Roboto', sans-serif;
+  background-color: $primary-background-color;
+  color: #333;
+}
+
+
+.custom-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  h1 {
+    color: $primary-color;
+  }
+}
+
+h1 {
+    color: $primary-color;
+}
