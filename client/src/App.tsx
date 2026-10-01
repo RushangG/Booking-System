@@ -1,5 +1,5 @@
 import { Button } from "primereact/button";
-
+import StripedRowsDemo from "./pages/StripedRowsDemo";
 function App() {
   return (
     <>
@@ -12,6 +12,8 @@ function App() {
           </Button>
         </div>
       </div>
+
+      <StripedRowsDemo />
     </>
   );
 }

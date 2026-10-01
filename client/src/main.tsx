@@ -9,10 +9,22 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "./styles/main.scss";
 import { PrimeReactProvider } from "@primereact/core";
+import Aura from "@primeuix/themes/aura";
+
+const theme = {
+  preset: Aura,
+  options: {
+    prefix: "p",
+    darkModeSelector: "system",
+    cssLayer: false,
+    cssVariables: true,
+    scoped: false,
+  },
+};
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <PrimeReactProvider license="LICENSE_KEY">
+    <PrimeReactProvider license="LICENSE_KEY" theme={theme}>
       <App />
     </PrimeReactProvider>
   </StrictMode>,
