@@ -9,7 +9,7 @@ export class Role {
   @Field(() => Int)
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   @Field()
   name: string;
 

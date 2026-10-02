@@ -5,9 +5,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { Company } from '../../companies/entities/company.entity';
-
+import { Booking } from '../../bookings/entities/booking.entity';
 @Entity()
 @ObjectType()
 export class Customer {
@@ -31,6 +32,9 @@ export class Customer {
   @Field(() => Company, { nullable: true })
   company: Company;
 
+  @OneToMany(() => Booking, (booking) => booking.customer, { nullable: true })
+  @Field(() => Booking, { nullable: true })
+  booking: Booking[];
 
   @CreateDateColumn({
     type: 'timestamp with time zone',

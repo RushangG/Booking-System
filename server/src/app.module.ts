@@ -10,6 +10,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './data-source';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
+import { AuthModule } from './auth/auth.module';
+import { AccommodationTypesModule } from './accommodation-types/accommodation-types.module';
+import { LocationsModule } from './locations/locations.module';
+import { AccommodationsModule } from './accommodations/accommodations.module';
+import { BookingStatusModule } from './booking-status/booking-status.module';
+import { BookingsModule } from './bookings/bookings.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({ ...AppDataSource.options }),
@@ -24,6 +30,12 @@ import { PermissionsModule } from './permissions/permissions.module';
     UsersModule,
     RolesModule,
     PermissionsModule,
+    AuthModule,
+    AccommodationTypesModule,
+    LocationsModule,
+    AccommodationsModule,
+    BookingStatusModule,
+    BookingsModule,
   ],
   controllers: [],
   providers: [],
