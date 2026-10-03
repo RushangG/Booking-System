@@ -2,10 +2,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { AuthLoginInput } from './dto/auth-login.input';
 import { UsersService } from '../users/users.service';
 import { AuthRegisterInput } from './dto/auth-register-input';
-
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService, 
+    private jwtService: JwtService) {}
 
   async login(authLoginInput: AuthLoginInput) {
     let user = await this.usersService.findByEmail(authLoginInput.email);
@@ -13,7 +15,17 @@ export class AuthService {
     if (!user || user.password !== authLoginInput.password) {
       throw new BadRequestException('Invalid credentials');
     }
-    return 'Login successful';
+
+    const payload = { email: user.email, sub: user.id, role: user.role };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: String(process.env.accessSecret),
+      expiresIn: '1h',
+    });
+
+
+
+    return { accessToken, user };
   }
 
   async register(authRegisterInput: AuthRegisterInput) {

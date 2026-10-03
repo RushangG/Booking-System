@@ -7,7 +7,7 @@ import { AuthRegisterInput } from './dto/auth-register-input';
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => String)
+  @Mutation(() => Auth)
   login(@Args('authLoginInput') authLoginInput: AuthLoginInput) {
     return this.authService.login(authLoginInput);
   }

@@ -13,6 +13,7 @@ import { Accommodation } from '../../accommodations/entities/accommodation.entit
 import { Customer } from '../../customer/entities/customer.entity';
 
 @ObjectType()
+@Entity()
 export class Booking {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
