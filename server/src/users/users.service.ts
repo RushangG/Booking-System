@@ -18,7 +18,7 @@ export class UsersService {
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.usersRepo.find();
   }
 
   async findOne(id: number) {
@@ -28,14 +28,20 @@ export class UsersService {
 
   async findByEmail(email: string) {
     let user = await this.usersRepo.findOneBy({ email: email });
-    return user; 
+    return user;
   }
 
   update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+    let user = this.usersRepo.update(id, updateUserInput);
+    return user;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    let user = await this.usersRepo.delete(id);
+    if (user.affected === 0) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    } else {
+      return { message: `User with ID ${id} has been deleted` };
+    }
   }
 }

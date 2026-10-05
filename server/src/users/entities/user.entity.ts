@@ -3,8 +3,8 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToMany,
   ManyToOne,
+  CreateDateColumn,
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
 @Entity()
@@ -14,6 +14,10 @@ export class User {
   @Field(() => Int)
   id: number;
 
+  @Field(() => Date)
+  @CreateDateColumn()
+  createdAt: Date;
+
   @Column()
   @Field()
   name: string;
@@ -22,7 +26,7 @@ export class User {
   @Field()
   email: string;
 
-  @Column()
+  @Column() 
   @Field()
   password: string;
 

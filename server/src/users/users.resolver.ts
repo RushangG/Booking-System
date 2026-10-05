@@ -19,7 +19,6 @@ export class UsersResolver {
     return this.usersService.findAll();
   }
 
-
   @UseGuards(GqlAuthGuard)
   @Query(() => User, { name: 'user' })
   findOne(@Args('id', { type: () => Int }) id: number) {
@@ -31,7 +30,7 @@ export class UsersResolver {
     return this.usersService.update(updateUserInput.id, updateUserInput);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => String)
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.remove(id);
   }
