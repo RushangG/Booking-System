@@ -10,15 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^4.3.2",
     "@primeicons/react": "^8.0.2",
     "@primereact/ui": "^11.2.0",
     "@primeuix/themes": "^3.0.1",
+    "graphql": "^16.14.2",
     "primeflex": "^4.0.0",
-    "primeicons": "^8.0.1",
-    "primereact": "^11.1.0",
+    "primeicons": "^8.0.2",
+    "primereact": "^11.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "sass": "^1.104.1"
+    "react-router-dom": "^7.18.4",
+    "sass": "^1.105.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
