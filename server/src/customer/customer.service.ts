@@ -4,11 +4,12 @@ import { UpdateCustomerInput } from './dto/update-customer.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from './entities/customer.entity';
+import { CustomerRepository } from './customer.repository';
 @Injectable()
 export class CustomerService {
   constructor(
-    @InjectRepository(Customer)
-    private readonly customerRepo: Repository<Customer>,
+    @InjectRepository(CustomerRepository)
+    private readonly customerRepo: CustomerRepository,
   ) {}
 
   create(createCustomerInput: CreateCustomerInput) {
@@ -25,7 +26,7 @@ export class CustomerService {
         { search: `%${search}%` },
       );
     }
-    query.leftJoinAndSelect('customer.company', 'company');
+
     let customers = await query.getMany();
     return customers;
 
@@ -40,20 +41,15 @@ export class CustomerService {
     let customer = await this.customerRepo.findOne({
       where: { id },
       relations: {
-        company: true,
+        customerCompanies: {
+          Company: true,
+        },
       },
     });
     if (!customer) {
       throw new NotFoundException(`Customer with ID ${id} not found`);
     }
     return customer;
-  }
-
-  async findByCompanyId(companyId: number) {
-    let customers = await this.customerRepo.find({
-      where: { company: { id: companyId } },
-    });
-    return customers;
   }
 
   async update(id: number, updateCustomerInput: UpdateCustomerInput) {

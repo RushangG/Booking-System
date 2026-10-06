@@ -5,6 +5,9 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { CurrentUser } from '../common/current-user.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
@@ -33,5 +36,16 @@ export class UsersResolver {
   @Mutation(() => String)
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.remove(id);
+  }
+
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  @Roles('Admin', 'Manager')
+  @Mutation(() => String)
+  resetPassword(
+    @CurrentUser('Id') userId: number,
+    @Args('oldPassword') oldPassword: string,
+    @Args('newPassword') newPassword: string,
+  ) {
+    return this.usersService.resetPassword(userId, oldPassword, newPassword);
   }
 }

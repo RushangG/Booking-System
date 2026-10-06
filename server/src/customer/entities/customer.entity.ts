@@ -4,11 +4,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Company } from '../../companies/entities/company.entity';
 import { Booking } from '../../bookings/entities/booking.entity';
+import { CustomerCompany } from '../../customer-companies/entities/customer-company.entity';
 @Entity()
 @ObjectType()
 export class Customer {
@@ -28,9 +27,13 @@ export class Customer {
   @Field({ nullable: true })
   phone?: string;
 
-  @ManyToOne(() => Company, (company) => company.Customer, { nullable: true })
-  @Field(() => Company, { nullable: true })
-  company: Company;
+  @OneToMany(
+    () => CustomerCompany,
+    (customerCompany) => customerCompany.Customer,
+    { nullable: true },
+  )
+  @Field(() => [CustomerCompany], { nullable: true })
+  customerCompanies: CustomerCompany[];
 
   @OneToMany(() => Booking, (booking) => booking.customer, { nullable: true })
   @Field(() => Booking, { nullable: true })

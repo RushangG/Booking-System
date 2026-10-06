@@ -1,26 +1,12 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Args,
-  Int,
-  Parent,
-  ResolveField,
-} from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { CompaniesService } from './companies.service';
-// import { CustomerService } from '../customer/customer.service';
 import { Company } from './entities/company.entity';
 import { CreateCompanyInput } from './dto/create-company.input';
 import { UpdateCompanyInput } from './dto/update-company.input';
-// import { Public } from 'src/auth/public.decorator';
-import { Customer } from '../customer/entities/customer.entity';
-// @Public()
+
 @Resolver(() => Company)
 export class CompaniesResolver {
-  constructor(
-    private readonly companiesService: CompaniesService,
-    // private readonly customerService: CustomerService,
-  ) {}
+  constructor(private readonly companiesService: CompaniesService) {}
 
   @Mutation(() => Company)
   createCompany(
@@ -39,13 +25,6 @@ export class CompaniesResolver {
     return this.companiesService.findOne(id);
   }
 
-  // @ResolveField(() => [Customer])
-  // async Customer(@Parent() company: Company) {
-  //   const { id } = company;
-  //   const customers = await this.customerService.findByCompanyId(id);
-  //   return customers;
-  // }
-
   @Mutation(() => Company)
   updateCompany(
     @Args('updateCompanyInput') updateCompanyInput: UpdateCompanyInput,
@@ -56,7 +35,7 @@ export class CompaniesResolver {
     );
   }
 
-  @Mutation(() => Company)
+  @Mutation(() => String)
   removeCompany(@Args('id', { type: () => Int }) id: number) {
     return this.companiesService.remove(id);
   }

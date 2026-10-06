@@ -5,8 +5,10 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
-import { Role } from '../../roles/entities/role.entity';
+import { UsersHasRoles } from '../../users_has_roles/entities/users_has_roles.entity';
+import { AuthSession } from '../../auth/entities/auth-session.entity';
 @Entity()
 @ObjectType()
 export class User {
@@ -26,11 +28,16 @@ export class User {
   @Field()
   email: string;
 
-  @Column() 
+  @Column()
   @Field()
   password: string;
 
-  @ManyToOne(() => Role, (role) => role.users)
-  @Field(() => Role, { nullable: true })
-  role: Role;
+  @OneToMany(() => UsersHasRoles, (usersHasRoles) => usersHasRoles.User, {
+    eager: true,
+  })
+  @Field(() => [UsersHasRoles], { nullable: true })
+  usersHasRoles: UsersHasRoles[];
+
+  @OneToMany(() => AuthSession, (authSession) => authSession.user)
+  authSessions: AuthSession[];
 }

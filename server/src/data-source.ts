@@ -9,6 +9,10 @@ import { Location } from './locations/entities/location.entity';
 import { Accommodation } from './accommodations/entities/accommodation.entity';
 import { BookingStatus } from './booking-status/entities/booking-status.entity';
 import { Booking } from './bookings/entities/booking.entity';
+import { UsersHasRoles } from './users_has_roles/entities/users_has_roles.entity';
+import { RolesHasPermissions } from './roles_has_permissions/entities/roles_has_permissions.entity';
+import { CustomerCompany } from './customer-companies/entities/customer-company.entity';
+import { AuthSession } from './auth/entities/auth-session.entity';
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
@@ -29,5 +33,9 @@ export const AppDataSource = new DataSource({
     Accommodation,
     BookingStatus,
     Booking,
+    UsersHasRoles,
+    RolesHasPermissions,
+    CustomerCompany,
+    AuthSession,
   ],
 });

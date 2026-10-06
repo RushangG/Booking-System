@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-
+import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { CompaniesModule } from './companies/companies.module';
 import { CustomerModule } from './customer/customer.module';
@@ -16,13 +16,24 @@ import { LocationsModule } from './locations/locations.module';
 import { AccommodationsModule } from './accommodations/accommodations.module';
 import { BookingStatusModule } from './booking-status/booking-status.module';
 import { BookingsModule } from './bookings/bookings.module';
+import { request } from 'express';
+import { UsersHasRolesModule } from './users_has_roles/users_has_roles.module';
+import { RolesHasPermissionsModule } from './roles_has_permissions/roles_has_permissions.module';
+import { CustomerCompaniesModule } from './customer-companies/customer-companies.module';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({ ...AppDataSource.options }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
       playground: true,
+      context: ({ req, res }: { req: Request; res: Response }) => ({
+        req,
+        res,
+      }),
     }),
 
     CompaniesModule,
@@ -36,6 +47,9 @@ import { BookingsModule } from './bookings/bookings.module';
     AccommodationsModule,
     BookingStatusModule,
     BookingsModule,
+    UsersHasRolesModule,
+    RolesHasPermissionsModule,
+    CustomerCompaniesModule,
   ],
   controllers: [],
   providers: [],

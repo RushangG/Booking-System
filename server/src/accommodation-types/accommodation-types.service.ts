@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AccommodationType } from './entities/accommodation-type.entity';
 import { AccommodationTypesRepository } from './accommodation-types.repository';
+import { GraphQLError } from 'graphql/error/GraphQLError';
 @Injectable()
 export class AccommodationTypesService {
   constructor(
@@ -28,8 +29,10 @@ export class AccommodationTypesService {
     });
 
     if (!accommodationType) {
-      throw new NotFoundException(`Accommodation Type with ID ${id} not found`);
+      throw new NotFoundException(`Accommodation type with ID ${id} not found`);
     }
+
+    return accommodationType;
   }
 
   update(

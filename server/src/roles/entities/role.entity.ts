@@ -1,7 +1,8 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
-import { Permission } from '../../permissions/entities/permission.entity';
+import { UsersHasRoles } from '../../users_has_roles/entities/users_has_roles.entity';
+import { RolesHasPermissions } from '../../roles_has_permissions/entities/roles_has_permissions.entity';
+
 @Entity()
 @ObjectType()
 export class Role {
@@ -17,11 +18,14 @@ export class Role {
   @Field()
   description: string;
 
-  @OneToMany(() => User, (user) => user.role)
-  @Field(() => [User], { nullable: true })
-  users: User[];
+  @OneToMany(() => UsersHasRoles, (usersHasRoles) => usersHasRoles.Role)
+  @Field(() => [UsersHasRoles], { nullable: true })
+  usersHasRoles: UsersHasRoles[];
 
-  @OneToMany(() => Permission, (permission) => permission.role)
-  @Field(() => [Permission], { nullable: true })
-  permissions: Permission[];
+  @OneToMany(
+    () => RolesHasPermissions,
+    (rolesHasPermissions) => rolesHasPermissions.Role,
+  )
+  @Field(() => [RolesHasPermissions], { nullable: true })
+  rolesHasPermissions: RolesHasPermissions[];
 }

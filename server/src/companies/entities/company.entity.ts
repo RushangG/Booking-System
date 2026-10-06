@@ -1,5 +1,5 @@
 import { ObjectType, Field, Int, InputType } from '@nestjs/graphql';
-import { Customer } from '../../customer/entities/customer.entity';
+import { CustomerCompany } from '../../customer-companies/entities/customer-company.entity';
 import {
   Entity,
   Column,
@@ -27,9 +27,13 @@ export class Company {
   @Field()
   industry: string;
 
-  @OneToMany(() => Customer, (customer) => customer.company)
-  @Field(() => [Customer], { nullable: true })
-  Customer: Customer[];
+  @OneToMany(
+    () => CustomerCompany,
+    (customerCompany) => customerCompany.Company,
+    { nullable: true },
+  )
+  @Field(() => [CustomerCompany], { nullable: true })
+  customerCompanies: CustomerCompany[];
 
   @CreateDateColumn({
     default: () => 'CURRENT_TIMESTAMP',
