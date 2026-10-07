@@ -1,7 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "@primereact/ui/button";
 import { DataTable } from "@primereact/ui/datatable";
-import { CUSTOMER_ALL } from "../../services/Apis/Customer";
-import { useQuery } from "@apollo/client/react";
+import { CUSTOMER_ALL, DELETE_CUSTOMER } from "../../services/Apis/Customer";
+import { useQuery, useMutation } from "@apollo/client/react";
 import { Guard } from "../Layout/Guard";
 type Customer = {
   id: number;
@@ -11,6 +12,9 @@ type Customer = {
 };
 
 export function Customer() {
+  const navigate = useNavigate();
+
+  const [deleteCustomer] = useMutation(DELETE_CUSTOMER);
   const { loading, error, data } = useQuery(CUSTOMER_ALL) as {
     loading: boolean;
     error: Error | undefined;
@@ -29,6 +33,18 @@ export function Customer() {
     phone: customer.phone,
   }));
 
+  function handleDeleteCustomer(id: number) {
+    if(window.confirm("Are you sure you want to delete this customer?")) {
+        deleteCustomer({
+            variables: {
+                id: id,
+            },
+            refetchQueries: [{ query: CUSTOMER_ALL }],
+            awaitRefetchQueries: true,
+        });
+      }
+  }
+
   return (
     <div className="p-4">
       <div className="flex justify-content-between align-items-center mb-4">
@@ -39,7 +55,9 @@ export function Customer() {
         </div>
 
         <Guard requiredPermission="customers:view">
-          <Button label="Add Customer">Add</Button>
+          <Button label="Add Customer"
+          onClick={() => navigate("/customer-add-edit")}
+          >Add</Button>
         </Guard>
       </div>
 
@@ -50,7 +68,7 @@ export function Customer() {
               <DataTable.THead>
                 <DataTable.THeadRow>
                   <DataTable.THeadCell>
-                    <DataTable.THeadTitle>ID</DataTable.THeadTitle>
+                    <DataTable.THeadTitle>No.</DataTable.THeadTitle>
                   </DataTable.THeadCell>
 
                   <DataTable.THeadCell>
@@ -72,9 +90,9 @@ export function Customer() {
               </DataTable.THead>
 
               <DataTable.TBody>
-                {({ item }: { item: Customer }) => (
+                {({ item, index }: { item: Customer; index: number }) => (
                   <DataTable.Row key={item.id}>
-                    <DataTable.Cell>{item.id}</DataTable.Cell>
+                    <DataTable.Cell>{index + 1}</DataTable.Cell>
 
                     <DataTable.Cell>
                       <span className="font-medium">{item.name}</span>
@@ -86,11 +104,15 @@ export function Customer() {
 
                     <DataTable.Cell>
                       <div className="flex gap-2">
-                        <Button severity="info" size="small" rounded text>
+                        <Button severity="info" size="small" rounded text
+                          onClick={() => navigate("/customer-add-edit", { state: { customer: item } })}
+                        >
                           Edit
-                        </Button>
-
-                        <Button severity="danger" size="small" rounded text>
+                        </Button> 
+                      
+                        <Button severity="danger" size="small" rounded text
+                        onClick={() => handleDeleteCustomer(item.id)}
+                        >
                           Delete
                         </Button>
                       </div>

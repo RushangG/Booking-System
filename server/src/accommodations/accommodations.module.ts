@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccommodationsService } from './accommodations.service';
 import { AccommodationsResolver } from './accommodations.resolver';
+import { AccommodationsRepository } from './accommodations.repository';
 import { Accommodation } from './entities/accommodation.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Accommodation])],
-  providers: [AccommodationsResolver, AccommodationsService],
+  providers: [AccommodationsResolver, AccommodationsService, AccommodationsRepository],
+  exports: [AccommodationsService],
 })
-export class AccommodationsModule {} 
+export class AccommodationsModule {}

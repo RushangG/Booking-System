@@ -1,26 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookingStatusInput } from './dto/create-booking-status.input';
 import { UpdateBookingStatusInput } from './dto/update-booking-status.input';
+import { BookingStatusRepository } from './booking-status.repository';
 
 @Injectable()
 export class BookingStatusService {
-  create(createBookingStatusInput: CreateBookingStatusInput) {
-    return 'This action adds a new bookingStatus';
+  constructor(
+    private readonly bookingStatusRepository: BookingStatusRepository,
+  ) {}
+
+  async create(createBookingStatusInput: CreateBookingStatusInput) {
+    const bookingStatus = this.bookingStatusRepository.create(createBookingStatusInput);
+    return this.bookingStatusRepository.save(bookingStatus);
   }
 
   findAll() {
-    return `This action returns all bookingStatus`;
+    return this.bookingStatusRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} bookingStatus`;
+  async findOne(id: number) {
+    const bookingStatus = await this.bookingStatusRepository.findOneBy({ id });
+    if (!bookingStatus) {
+      throw new NotFoundException(`Booking status with ID ${id} not found`);
+    }
+    return bookingStatus;
   }
 
-  update(id: number, updateBookingStatusInput: UpdateBookingStatusInput) {
-    return `This action updates a #${id} bookingStatus`;
+  async update(id: number, updateBookingStatusInput: UpdateBookingStatusInput) {
+    const bookingStatus = await this.bookingStatusRepository.findOneBy({ id });
+    if (!bookingStatus) {
+      throw new NotFoundException(`Booking status with ID ${id} not found`);
+    }
+    await this.bookingStatusRepository.update(id, updateBookingStatusInput);
+    return this.bookingStatusRepository.findOneBy({ id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} bookingStatus`;
+  async remove(id: number) {
+    const bookingStatus = await this.bookingStatusRepository.findOneBy({ id });
+    if (!bookingStatus) {
+      throw new NotFoundException(`Booking status with ID ${id} not found`);
+    }
+    await this.bookingStatusRepository.delete(id);
+    return bookingStatus;
   }
 }

@@ -35,12 +35,13 @@ export function Layout() {
                     <Sidebar.GroupLabel>Navigation</Sidebar.GroupLabel>
                     <Sidebar.GroupContent>
                       <Sidebar.Menu>
+                        
                         <Sidebar.MenuItem>
                           <Sidebar.MenuButton
                             onClick={() => navigate("/customer")}
                           >
                             <Users />
-                            <span> Customer </span>
+                            <span>Customer</span>
                           </Sidebar.MenuButton>
                         </Sidebar.MenuItem>
                         <Sidebar.MenuItem>
@@ -53,18 +54,10 @@ export function Layout() {
                         </Sidebar.MenuItem>
                         <Sidebar.MenuItem>
                           <Sidebar.MenuButton
-                            onClick={() => navigate("/booking")}
-                          >
-                            <Users />
-                            <span>Bookings</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
                             onClick={() => navigate("/users")}
                           >
                             <Users />
-                            <span>Users</span>
+                            <span> Users </span>
                           </Sidebar.MenuButton>
                         </Sidebar.MenuItem>
                         <Sidebar.MenuItem>
@@ -72,7 +65,15 @@ export function Layout() {
                             onClick={() => navigate("/accommodation")}
                           >
                             <Users />
-                            <span>Accommodations</span>
+                            <span>Accommodation</span>
+                          </Sidebar.MenuButton>
+                        </Sidebar.MenuItem>
+                        <Sidebar.MenuItem>
+                          <Sidebar.MenuButton
+                            onClick={() => navigate("/booking")}
+                          >
+                            <Users />
+                            <span>Booking</span>
                           </Sidebar.MenuButton>
                         </Sidebar.MenuItem>
                       </Sidebar.Menu>
@@ -136,7 +137,7 @@ export function Layout() {
                 <SidebarIcon />
               </Sidebar.Trigger>
             </header>
-            <div className="flex-1 p-4 flex flex-col gap-4">
+            <div>
               <Outlet />
             </div>
           </Sidebar.Main>

@@ -1,18 +1,29 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 import { Layout } from "../pages/Layout/Layout";
+
 import { Login } from "../pages/auth/Login";
 import { Register } from "../pages/auth/Register";
+
+import { ProtectedRoute } from "../pages/Layout/ProtectedRoute";
+
 import { Customer } from "../pages/customer/Customer";
 import { Company } from "../pages/company/Company";
 import { Booking } from "../pages/booking/Booking";
 import { Accommodation } from "../pages//accommodations/Accommodations";
 import { Users } from "../pages/users/Users";
 import { CompanyAddEdit } from "../pages/company/CompanyAddEdit";
+import { CustomerAddEdit } from "../pages/customer/CustomerAddEdit";
+import { UsersAddEdit } from "../pages/users/UsersAddEdit";
+import { AccommodationAddEdit } from "../pages/accommodations/AccommodationAddEdit";
+import { BookingAddEdit } from "../pages/booking/BookingAddEdit";
+
+
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/login" replace />,
   },
+
   {
     path: "/login",
     element: <Login />,
@@ -21,35 +32,60 @@ export const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
+
   {
-    element: <Layout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        path: "/customer",
-        element: <Customer />,
-      },
-      {
-        path: "/company",
-        element: <Company />,
-      },
-      {
-        path: "/booking",
-        element: <Booking />,
-      },
-      {
-        path: "/accommodation",
-        element: <Accommodation />,
-      },
-      {
-        path: "/company-add-edit",
-        element: <CompanyAddEdit />,
-      },
-      {
-        path: "/users",
-        element: <Users />,
+        element: <Layout />,
+        children: [
+          {
+            path: "/customer",
+            element: <Customer />,
+          },
+          {
+            path: "/company",
+            element: <Company />,
+          },
+          {
+            path: "/customer-add-edit",
+            element: <CustomerAddEdit />,
+          },
+          {
+            path: "/booking",
+            element: <Booking />,
+          },
+          {
+            path: "/booking-add-edit",
+            element: <BookingAddEdit />,
+          },
+          {
+            path: "/accommodation",
+            element: <Accommodation />,
+          },
+          {
+            path: "/accommodation-add-edit",
+            element: <AccommodationAddEdit />,
+          },
+          {
+            path: "/company-add-edit",
+            element: <CompanyAddEdit />,
+          },
+          {
+            path: "/users",
+            element: <Users />,
+
+          },
+          {
+            path: "/user-add-edit",
+            element: <UsersAddEdit />,
+          }
+
+        ],
       },
     ],
   },
+
   {
     path: "*",
     element: <Navigate to="/login" replace />,

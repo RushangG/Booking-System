@@ -4,6 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useMutation } from "@apollo/client/react";
 import { AuthLogin } from "../../services/Auth/AuthApi";
+import { useAuth } from "../Layout/ContextProvider.tsx";  
 
 interface LoginResponse {
   login: {
@@ -13,6 +14,7 @@ interface LoginResponse {
 }
 
 export function Login() {
+  const { login: authLogin } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,6 +39,7 @@ export function Login() {
     if (result.data) {
       localStorage.setItem("accessToken", result.data.login.accessToken);
       localStorage.setItem("refreshToken", result.data.login.refreshToken);
+       await authLogin();
       navigate("/customer");
     }
 

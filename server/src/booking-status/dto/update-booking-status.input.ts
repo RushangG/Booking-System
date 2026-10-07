@@ -6,3 +6,4 @@ export class UpdateBookingStatusInput extends PartialType(CreateBookingStatusInp
   @Field(() => Int)
   id: number;
 }
+

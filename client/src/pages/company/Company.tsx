@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@primereact/ui/button";
 import { DataTable } from "@primereact/ui/datatable";
-import { useQuery } from "@apollo/client/react";
-import { AllCompany } from "../../services/Apis/Company";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { AllCompany, DELETE_COMPANY } from "../../services/Apis/Company";
 
 type Company = {
   id: number;
@@ -13,6 +13,8 @@ type Company = {
 
 export function Company() {
   const navigate = useNavigate();
+    const [deleteCompany] = useMutation(DELETE_COMPANY);
+
   const { loading, error, data } = useQuery(AllCompany) as {
     loading: boolean;
     error: Error | undefined;
@@ -30,6 +32,20 @@ export function Company() {
     address: company.address,
     industry: company.industry,
   }));
+
+
+  function handleDeleteCompany(id: number) { 
+    if(window.confirm("Are you sure you want to delete this company?")) {
+        deleteCompany({
+            variables: {
+                id: id,
+            },
+            refetchQueries: [{ query: AllCompany }],
+            awaitRefetchQueries: true,
+        });
+       
+      }
+  }
 
   return (
     <div className="p-4">
@@ -55,7 +71,7 @@ export function Company() {
               <DataTable.THead>
                 <DataTable.THeadRow>
                   <DataTable.THeadCell>
-                    <DataTable.THeadTitle>id</DataTable.THeadTitle>
+                    <DataTable.THeadTitle>No.</DataTable.THeadTitle>
                   </DataTable.THeadCell>
 
                   <DataTable.THeadCell>
@@ -77,9 +93,9 @@ export function Company() {
               </DataTable.THead>
 
               <DataTable.TBody>
-                {({ item }: { item: Company }) => (
+                {({ item, index }: { item: Company; index: number }) => (
                   <DataTable.Row key={item.id}>
-                    <DataTable.Cell>{item.id}</DataTable.Cell>
+                    <DataTable.Cell>{index + 1}</DataTable.Cell>
 
                     <DataTable.Cell>
                       <span className="font-medium">{item.name}</span>
@@ -91,11 +107,15 @@ export function Company() {
 
                     <DataTable.Cell>
                       <div className="flex gap-2">
-                        <Button severity="info" size="small" rounded text>
+                        <Button severity="info" size="small" rounded text
+                        onClick={() => navigate("/company-add-edit/" , { state: { company: item } })}
+                        >
                           Edit
                         </Button>
 
-                        <Button severity="danger" size="small" rounded text>
+                        <Button severity="danger" size="small" rounded text
+                        onClick={() => handleDeleteCompany(item.id)}
+                        >
                           Delete
                         </Button>
                       </div>

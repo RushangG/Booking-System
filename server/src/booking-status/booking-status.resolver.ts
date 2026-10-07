@@ -13,7 +13,7 @@ export class BookingStatusResolver {
     return this.bookingStatusService.create(createBookingStatusInput);
   }
 
-  @Query(() => [BookingStatus], { name: 'bookingStatus' })
+  @Query(() => [BookingStatus], { name: 'bookingStatuses' })
   findAll() {
     return this.bookingStatusService.findAll();
   }

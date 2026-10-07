@@ -3,7 +3,7 @@ import { router } from "./routes/AppRoutes";
 import { PermissionProvider } from "./pages/Layout/PermissionProvider ";
 import { useAuth } from "./pages/Layout/ContextProvider.tsx";
 function App() {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return <div>Loading...</div>;

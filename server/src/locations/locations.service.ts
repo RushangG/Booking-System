@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLocationInput } from './dto/create-location.input';
 import { UpdateLocationInput } from './dto/update-location.input';
+import { LocationsRepository } from './locations.repository';
 
 @Injectable()
 export class LocationsService {
-  create(createLocationInput: CreateLocationInput) {
-    return 'This action adds a new location';
+  constructor(private readonly locationsRepository: LocationsRepository) {}
+
+  async create(createLocationInput: CreateLocationInput) {
+    const location = this.locationsRepository.create(createLocationInput);
+    return this.locationsRepository.save(location);
   }
 
   findAll() {
-    return `This action returns all locations`;
+    return this.locationsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} location`;
+  async findOne(id: number) {
+    const location = await this.locationsRepository.findOneBy({ id });
+    if (!location) {
+      throw new NotFoundException(`Location with ID ${id} not found`);
+    }
+    return location;
   }
 
-  update(id: number, updateLocationInput: UpdateLocationInput) {
-    return `This action updates a #${id} location`;
+  async update(id: number, updateLocationInput: UpdateLocationInput) {
+    const location = await this.locationsRepository.findOneBy({ id });
+    if (!location) {
+      throw new NotFoundException(`Location with ID ${id} not found`);
+    }
+    await this.locationsRepository.update(id, updateLocationInput);
+    return this.locationsRepository.findOneBy({ id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} location`;
+  async remove(id: number) {
+    const location = await this.locationsRepository.findOneBy({ id });
+    if (!location) {
+      throw new NotFoundException(`Location with ID ${id} not found`);
+    }
+    await this.locationsRepository.delete(id);
+    return location;
   }
 }
