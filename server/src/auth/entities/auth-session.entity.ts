@@ -23,10 +23,10 @@ export class AuthSession {
   accessTokenExpires: Date;
 
   @Column()
-  refreshAccessToken: string;
+  refreshToken: string;
 
   @Column()
-  refreshAccessTokenExpires: Date;
+  refreshTokenExpires: Date;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -39,7 +39,7 @@ export class UsersResolver {
   }
 
   @UseGuards(GqlAuthGuard, RolesGuard)
-  @Roles('Admin', 'Manager')
+  // @Roles('Admin', 'Manager')
   @Mutation(() => String)
   resetPassword(
     @CurrentUser('Id') userId: number,

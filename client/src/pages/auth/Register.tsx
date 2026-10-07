@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-
+import { AuthRegister } from "../../services/Auth/AuthApi.ts";
+import { useMutation } from "@apollo/client/react";
 export function Register() {
+  const navigate = useNavigate();
   const [registerData, setRegisterData] = useState({
     name: "",
     email: "",
@@ -18,35 +20,44 @@ export function Register() {
     });
   };
 
-  const handleRegister = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const [register] = useMutation(AuthRegister, {
+    variables: {
+      name: registerData.name,
+      email: registerData.email,
+      password: registerData.password,
+    },
+  });
+
+  const handleRegister = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log(registerData);
+    const response = await register({
+      variables: {
+        name: registerData.name,
+        email: registerData.email,
+        password: registerData.password,
+      },
+    });
 
+    if (response.data) {
+      alert("Registration successful! Please login.");
+      navigate("/login");
+    }
+    console.log(registerData);
   };
 
   return (
     <div className="flex justify-content-center align-items-center min-h-screen surface-ground p-3">
       <div className="surface-card border-round shadow-2 p-5 w-full md:w-6 lg:w-4">
-
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold m-0">
-            Create Account
-          </h2>
+          <h2 className="text-2xl font-bold m-0">Create Account</h2>
 
-          <p className="text-color-secondary mt-2">
-            Register your account
-          </p>
+          <p className="text-color-secondary mt-2">Register your account</p>
         </div>
 
         <form onSubmit={handleRegister}>
-
-          
           <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="block font-medium mb-2"
-            >
+            <label htmlFor="name" className="block font-medium mb-2">
               Name
             </label>
 
@@ -56,16 +67,13 @@ export function Register() {
               value={registerData.name}
               onChange={handleChange}
               placeholder="Enter your name"
-              className="w-full"
+              className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
+              required
             />
           </div>
 
-          
           <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block font-medium mb-2"
-            >
+            <label htmlFor="email" className="block font-medium mb-2">
               Email
             </label>
 
@@ -76,16 +84,13 @@ export function Register() {
               value={registerData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full"
+              className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
+              required
             />
           </div>
 
-          
           <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block font-medium mb-2"
-            >
+            <label htmlFor="password" className="block font-medium mb-2">
               Password
             </label>
 
@@ -96,19 +101,15 @@ export function Register() {
               value={registerData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className="w-full"
+              className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
+              required
             />
           </div>
 
-        
           <div className="mb-4">
-            <label
-              htmlFor="confirmPassword"
-              className="block font-medium mb-2"
-            >
+            <label htmlFor="confirmPassword" className="block font-medium mb-2">
               Confirm Password
             </label>
-
             <InputText
               id="confirmPassword"
               name="confirmPassword"
@@ -116,7 +117,8 @@ export function Register() {
               value={registerData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm your password"
-              className="w-full"
+              className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
+              required
             />
           </div>
 
@@ -124,15 +126,14 @@ export function Register() {
             type="submit"
             label="Register"
             icon="pi pi-user-plus"
-            className="w-full h-2rem"
+            className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
           >
-          Register</Button>
+            Register
+          </Button>
         </form>
 
         <div className="text-center mt-4">
-          <span className="text-color-secondary">
-            Already have an account?
-          </span>
+          <span className="text-color-secondary">Already have an account?</span>
 
           <Link
             to="/login"
@@ -141,7 +142,6 @@ export function Register() {
             Login
           </Link>
         </div>
-
       </div>
     </div>
   );

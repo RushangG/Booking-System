@@ -1,7 +1,8 @@
 import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
 import { type Response, type Request } from 'express';
 import { AuthService } from './auth.service';
-import { Auth } from './entities/auth.model';
+import { Auth } from './dto/auth.model';
+import { VerifyAccessTokenResponse } from './dto/verify-acesss-token.model';
 import { AuthLoginInput } from './dto/auth-login.input';
 import { AuthRegisterInput } from './dto/auth-register-input';
 import { Res } from '@nestjs/common';
@@ -47,5 +48,9 @@ export class AuthResolver {
   @Mutation(() => String)
   logout() {
     return 'Logout successful';
+  }
+  @Mutation(() => VerifyAccessTokenResponse)
+  async verifyAccessToken(@Args('accessToken') accessToken: string) {
+    return this.authService.verifyAccessToken(accessToken);
   }
 }

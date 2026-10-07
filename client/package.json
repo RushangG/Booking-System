@@ -15,6 +15,7 @@
     "@primereact/ui": "^11.2.0",
     "@primeuix/themes": "^3.0.1",
     "graphql": "^16.14.2",
+    "jwt-decode": "^4.0.0",
     "primeflex": "^4.0.0",
     "primeicons": "^8.0.2",
     "primereact": "^11.2.0",
