@@ -38,6 +38,11 @@ export class UsersResolver {
     return this.usersService.remove(id);
   }
 
+  @Query(() => [User], { name: 'usersNotInCompany' })
+  findUserNotInCompany(@Args('companyId', { type: () => Int }) companyId: number) {
+    return this.usersService.findUserNotInCompany(companyId);
+  } 
+
   @UseGuards(GqlAuthGuard, RolesGuard)
   // @Roles('Admin', 'Manager')
   @Mutation(() => String)

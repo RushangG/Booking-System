@@ -66,3 +66,14 @@ export const USER_COMPANIES = gql`
     }
   }
 `;
+
+export const USERS_NOT_IN_COMPANY = gql`
+  query UsersNotInCompany($companyId: Int!) {
+    usersNotInCompany(companyId: $companyId) {
+      id
+      createdAt
+      name
+      email
+    }
+  }
+`;

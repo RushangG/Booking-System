@@ -110,4 +110,26 @@ export class UsersService {
 
     return 'Password has been successfully updated';
   }
+
+  async findUserNotInCompany(companyId: number) {
+    const usersInCompany = await this.usersRepo.
+       createQueryBuilder('user')
+      .leftJoin('user.companiesHasUsers', 'companiesHasUsers')
+      .where('companiesHasUsers.companyId = :companyId', { companyId })
+      .getMany();
+
+   const userIds = usersInCompany.map((user) => user.id);
+
+   const query = this.usersRepo.createQueryBuilder('user');
+    if (userIds.length > 0) {
+      query.where('user.id NOT IN (:...userIds)', {
+      userIds,
+    });
+  }
+
+const usersNotInCompany = await query.getMany();
+
+      return usersNotInCompany;
+
+  }
 }

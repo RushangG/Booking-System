@@ -77,3 +77,29 @@ export const GET_COMPANY_USERS = gql`
     }
   }
 `;
+
+export const ASSIGN_USERS_TO_COMPANY = gql`
+  mutation AssignUsersToCompany(
+    $companyId: Int!
+    $userId: String!
+  ) {
+    assignUsersToCompany(
+      companyId: $companyId
+      userId: $userId
+    ) {
+      id
+      createdAt
+      user {
+        id
+        name
+        email
+      }
+      company {
+        id
+        name
+        address
+        industry
+      }
+    }
+  }
+`;
