@@ -44,7 +44,7 @@ export class AuthService {
       refreshToken: refreshToken,
       accessToken: accessToken,
       refreshTokenExpires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      accessTokenExpires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour
+      accessTokenExpires: new Date(Date.now() + 1 * 24 * 60 * 1000), // 1 day
     });
 
     let existingSession = await this.authSessionRepository.findOne({
@@ -128,7 +128,7 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(payload, {
       secret: String(this.configService.get('ACCESS_SECRET')),
-      expiresIn: '1h',
+      expiresIn: '1d',
     });
 
     return accessToken;

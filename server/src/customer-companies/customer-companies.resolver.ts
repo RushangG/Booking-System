@@ -6,10 +6,30 @@ import { UpdateCustomerCompanyInput } from './dto/update-customer-company.input'
 
 @Resolver(() => CustomerCompany)
 export class CustomerCompaniesResolver {
-  constructor(private readonly customerCompaniesService: CustomerCompaniesService) {}
+  constructor(
+    private readonly customerCompaniesService: CustomerCompaniesService,
+  ) {}
+
+  @Mutation(() => [CustomerCompany])
+  async assignCustomersToCompany(
+    @Args('customerId', { type: () => Int }) customerId: number,
+    @Args('companyIds', { type: () => String }) companyIds: string,
+  ) {
+    let parsedCompanyIds = companyIds
+      .split(',')
+      .map((id) => parseInt(id.trim(), 10));
+
+    return await this.customerCompaniesService.assignCustomersToCompany(
+      parsedCompanyIds,
+      customerId,
+    );
+  }
 
   @Mutation(() => CustomerCompany)
-  createCustomerCompany(@Args('createCustomerCompanyInput') createCustomerCompanyInput: CreateCustomerCompanyInput) {
+  createCustomerCompany(
+    @Args('createCustomerCompanyInput')
+    createCustomerCompanyInput: CreateCustomerCompanyInput,
+  ) {
     return this.customerCompaniesService.create(createCustomerCompanyInput);
   }
 
@@ -24,8 +44,14 @@ export class CustomerCompaniesResolver {
   }
 
   @Mutation(() => CustomerCompany)
-  updateCustomerCompany(@Args('updateCustomerCompanyInput') updateCustomerCompanyInput: UpdateCustomerCompanyInput) {
-    return this.customerCompaniesService.update(updateCustomerCompanyInput.id, updateCustomerCompanyInput);
+  updateCustomerCompany(
+    @Args('updateCustomerCompanyInput')
+    updateCustomerCompanyInput: UpdateCustomerCompanyInput,
+  ) {
+    return this.customerCompaniesService.update(
+      updateCustomerCompanyInput.id,
+      updateCustomerCompanyInput,
+    );
   }
 
   @Mutation(() => CustomerCompany)

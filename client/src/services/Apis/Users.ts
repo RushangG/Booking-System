@@ -23,17 +23,9 @@ export const USER_BY_ID = gql`
 `;
 
 export const CREATE_USER = gql`
-  mutation CreateUser(
-    $name: String!
-    $email: String!
-    $password: String!
-  ) {
+  mutation CreateUser($name: String!, $email: String!, $password: String!) {
     createUser(
-      createUserInput: {
-        name: $name
-        email: $email 
-        password: $password
-      }
+      createUserInput: { name: $name, email: $email, password: $password }
     ) {
       id
       createdAt
@@ -44,18 +36,8 @@ export const CREATE_USER = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation UpdateUser(
-    $id: Int!
-    $name: String!
-    $email: String!
-  ) {
-    updateUser(
-      updateUserInput: {
-        id: $id
-        name: $name
-        email: $email
-      }
-    ) {
+  mutation UpdateUser($id: Int!, $name: String!, $email: String!) {
+    updateUser(updateUserInput: { id: $id, name: $name, email: $email }) {
       id
       createdAt
       name
@@ -67,5 +49,20 @@ export const UPDATE_USER = gql`
 export const DELETE_USER = gql`
   mutation RemoveUser($id: Int!) {
     removeUser(id: $id)
+  }
+`;
+
+export const USER_COMPANIES = gql`
+  query User($id: Int!) {
+    user(id: $id) {
+      companiesHasUsers {
+        company {
+          id
+          name
+          address
+          industry
+        }
+      }
+    }
   }
 `;

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@primereact/ui/button";
 import { DataTable } from "@primereact/ui/datatable";
 import { CUSTOMER_ALL, DELETE_CUSTOMER } from "../../services/Apis/Customer";
@@ -12,6 +12,9 @@ type Customer = {
 };
 
 export function Customer() {
+  const location = useLocation();
+  const companyId = location.state?.companyId;
+  console.log("Company ID from state:", companyId);
   const navigate = useNavigate();
 
   const [deleteCustomer] = useMutation(DELETE_CUSTOMER);
@@ -34,15 +37,15 @@ export function Customer() {
   }));
 
   function handleDeleteCustomer(id: number) {
-    if(window.confirm("Are you sure you want to delete this customer?")) {
-        deleteCustomer({
-            variables: {
-                id: id,
-            },
-            refetchQueries: [{ query: CUSTOMER_ALL }],
-            awaitRefetchQueries: true,
-        });
-      }
+    if (window.confirm("Are you sure you want to delete this customer?")) {
+      deleteCustomer({
+        variables: {
+          id: id,
+        },
+        refetchQueries: [{ query: CUSTOMER_ALL }],
+        awaitRefetchQueries: true,
+      });
+    }
   }
 
   return (
@@ -55,9 +58,12 @@ export function Customer() {
         </div>
 
         <Guard requiredPermission="customers:view">
-          <Button label="Add Customer"
-          onClick={() => navigate("/customer-add-edit")}
-          >Add</Button>
+          <Button
+            label="Add Customer"
+            onClick={() => navigate("/customer-add-edit")}
+          >
+            Add
+          </Button>
         </Guard>
       </div>
 
@@ -104,14 +110,26 @@ export function Customer() {
 
                     <DataTable.Cell>
                       <div className="flex gap-2">
-                        <Button severity="info" size="small" rounded text
-                          onClick={() => navigate("/customer-add-edit", { state: { customer: item } })}
+                        <Button
+                          severity="info"
+                          size="small"
+                          rounded
+                          text
+                          onClick={() =>
+                            navigate("/customer-add-edit", {
+                              state: { customer: item },
+                            })
+                          }
                         >
                           Edit
-                        </Button> 
-                      
-                        <Button severity="danger" size="small" rounded text
-                        onClick={() => handleDeleteCustomer(item.id)}
+                        </Button>
+
+                        <Button
+                          severity="danger"
+                          size="small"
+                          rounded
+                          text
+                          onClick={() => handleDeleteCustomer(item.id)}
                         >
                           Delete
                         </Button>

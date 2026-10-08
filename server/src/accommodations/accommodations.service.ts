@@ -6,6 +6,7 @@ import { AccommodationsRepository } from './accommodations.repository';
 import { Accommodation } from './entities/accommodation.entity';
 import { AccommodationType } from '../accommodation-types/entities/accommodation-type.entity';
 import { Location } from '../locations/entities/location.entity';
+import { FindOptionsWhere, Like } from 'typeorm';
 
 @Injectable()
 export class AccommodationsService {
@@ -19,18 +20,32 @@ export class AccommodationsService {
     accommodation.name = createAccommodationInput.name;
     accommodation.description = createAccommodationInput.description;
     accommodation.price_per_night = createAccommodationInput.price_per_night;
-    accommodation.type_id = { id: createAccommodationInput.type_id } as AccommodationType;
-    accommodation.location_id = { id: createAccommodationInput.location_id } as Location;
+    accommodation.type_id = {
+      id: createAccommodationInput.type_id,
+    } as AccommodationType;
+    accommodation.location_id = {
+      id: createAccommodationInput.location_id,
+    } as Location;
     return this.accommodationRepo.save(accommodation);
   }
 
-  async findAll() {
-    return this.accommodationRepo.find({
-      relations: {
-        type_id: true,
-        location_id: true,
-      },
-    });
+  async findAll(searchLocation?: string) {
+    let query = this.accommodationRepo.createQueryBuilder('accommodation');
+
+    query.leftJoinAndSelect('accommodation.type_id', 'type_id');
+    query.leftJoinAndSelect('accommodation.location_id', 'location_id');
+
+    if (searchLocation) {
+      query.andWhere(
+        'location_id.name ILIKE :searchLocation OR location_id.city ILIKE :searchLocation OR location_id.state ILIKE :searchLocation OR location_id.country ILIKE :searchLocation',
+        {
+          searchLocation: `%${searchLocation}%`,
+        },
+      );
+    }
+
+    let accommodations = await query.getMany();
+    return accommodations;
   }
 
   async findOne(id: number) {
@@ -63,10 +78,14 @@ export class AccommodationsService {
       accommodation.price_per_night = updateAccommodationInput.price_per_night;
     }
     if (updateAccommodationInput.type_id !== undefined) {
-      accommodation.type_id = { id: updateAccommodationInput.type_id } as AccommodationType;
+      accommodation.type_id = {
+        id: updateAccommodationInput.type_id,
+      } as AccommodationType;
     }
     if (updateAccommodationInput.location_id !== undefined) {
-      accommodation.location_id = { id: updateAccommodationInput.location_id } as Location;
+      accommodation.location_id = {
+        id: updateAccommodationInput.location_id,
+      } as Location;
     }
 
     await this.accommodationRepo.save(accommodation);

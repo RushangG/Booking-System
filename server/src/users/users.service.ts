@@ -31,6 +31,9 @@ export class UsersService {
             },
           },
         },
+        companiesHasUsers: {
+          company: true,
+        },
       },
     });
   }
@@ -45,6 +48,9 @@ export class UsersService {
               Permission: true,
             },
           },
+        },
+        companiesHasUsers: {
+          company: true,
         },
       },
     });
@@ -70,7 +76,8 @@ export class UsersService {
 
   update(id: number, updateUserInput: UpdateUserInput) {
     let user = this.usersRepo.update(id, updateUserInput);
-    return user;
+    let updatedUser = this.usersRepo.findOneBy({ id: id });
+    return updatedUser;
   }
 
   async remove(id: number) {
@@ -78,7 +85,7 @@ export class UsersService {
     if (user.affected === 0) {
       throw new NotFoundException(`User with ID ${id} not found`);
     } else {
-      return { message: `User with ID ${id} has been deleted` };
+      return `User with ID ${id} has been deleted`;
     }
   }
 

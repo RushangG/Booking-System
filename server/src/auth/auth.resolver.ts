@@ -7,11 +7,13 @@ import { AuthLoginInput } from './dto/auth-login.input';
 import { AuthRegisterInput } from './dto/auth-register-input';
 import { Res } from '@nestjs/common';
 import { NewAccessToken } from './dto/new-access-token.model';
+import { Public } from './public.decorator';
 
 @Resolver(() => Auth)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Mutation(() => Auth)
   async login(
     @Args('authLoginInput') authLoginInput: AuthLoginInput,
@@ -28,11 +30,13 @@ export class AuthResolver {
     return result;
   }
 
+  @Public()
   @Mutation(() => String)
   register(@Args('authRegisterInput') authRegisterInput: AuthRegisterInput) {
     return this.authService.register(authRegisterInput);
   }
 
+  @Public()
   @Mutation(() => NewAccessToken)
   async refreshAccessToken(
     @Args('refreshToken') refreshToken: string,
@@ -49,6 +53,8 @@ export class AuthResolver {
   logout() {
     return 'Logout successful';
   }
+
+  @Public()
   @Mutation(() => VerifyAccessTokenResponse)
   async verifyAccessToken(@Args('accessToken') accessToken: string) {
     return this.authService.verifyAccessToken(accessToken);

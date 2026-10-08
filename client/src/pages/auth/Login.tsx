@@ -4,7 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useMutation } from "@apollo/client/react";
 import { AuthLogin } from "../../services/Auth/AuthApi";
-import { useAuth } from "../Layout/ContextProvider.tsx";  
+import { useAuth } from "../Layout/ContextProvider.tsx";
 
 interface LoginResponse {
   login: {
@@ -18,6 +18,7 @@ export function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const [login] = useMutation(AuthLogin);
 
@@ -29,24 +30,31 @@ export function Login() {
       password,
     });
 
-    const result = (await login({
-      variables: {
-        email,
-        password,
-      },
-    })) as { data: LoginResponse | undefined };
+    try {
+      const result = (await login({
+        variables: {
+          email,
+          password,
+        },
+      })) as { data: LoginResponse | undefined };
+      console.log("login result", result.data);
 
-    if (result.data) {
-      localStorage.setItem("accessToken", result.data.login.accessToken);
-      localStorage.setItem("refreshToken", result.data.login.refreshToken);
-       await authLogin();
-      navigate("/customer");
+      if (result.data) { 
+        localStorage.setItem("accessToken", result.data.login.accessToken);
+        localStorage.setItem("refreshToken", result.data.login.refreshToken);
+        setError(null);
+        await authLogin();
+        navigate("/company-select-list");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError("Email or password is incorrect. Please try again.");
     }
-
-    console.log("login result", result.data);
   }
 
   return (
+    <>
+    
     <div className="flex justify-content-center align-items-center min-h-screen surface-ground p-3">
       <div className="surface-card border-round shadow-2 p-5 w-full md:w-6 lg:w-4">
         <div className="text-center mb-4">
@@ -99,6 +107,8 @@ export function Login() {
           >
             Login
           </Button>
+
+          {error && <p className="text-red-500 mt-2">{error}</p>}
         </form>
 
         <div className="text-center mt-4">
@@ -113,5 +123,7 @@ export function Login() {
         </div>
       </div>
     </div>
+
+    </>
   );
 }

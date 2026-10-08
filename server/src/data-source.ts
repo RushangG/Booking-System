@@ -13,6 +13,7 @@ import { UsersHasRoles } from './users_has_roles/entities/users_has_roles.entity
 import { RolesHasPermissions } from './roles_has_permissions/entities/roles_has_permissions.entity';
 import { CustomerCompany } from './customer-companies/entities/customer-company.entity';
 import { AuthSession } from './auth/entities/auth-session.entity';
+import { CompaniesHasUsers } from './companies-has-users/entities/companies-has-users.entity';
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
@@ -37,5 +38,6 @@ export const AppDataSource = new DataSource({
     RolesHasPermissions,
     CustomerCompany,
     AuthSession,
+    CompaniesHasUsers,
   ],
 });

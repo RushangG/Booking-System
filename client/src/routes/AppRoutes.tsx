@@ -16,8 +16,9 @@ import { CustomerAddEdit } from "../pages/customer/CustomerAddEdit";
 import { UsersAddEdit } from "../pages/users/UsersAddEdit";
 import { AccommodationAddEdit } from "../pages/accommodations/AccommodationAddEdit";
 import { BookingAddEdit } from "../pages/booking/BookingAddEdit";
-
-
+import { CompanySelectList } from "../pages/company/CompanySelectList";
+import { CompanyUsers } from "../pages/company/CompanyUsers";
+import { Setting } from "../pages/setting/Setting";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
+      {
+        path: "/company-select-list",
+        element: <CompanySelectList />,
+      },
       {
         element: <Layout />,
         children: [
@@ -72,15 +77,22 @@ export const router = createBrowserRouter([
             element: <CompanyAddEdit />,
           },
           {
+            path: "/company-users",
+            element: <CompanyUsers />,
+          },
+
+          {
             path: "/users",
             element: <Users />,
-
           },
           {
             path: "/user-add-edit",
             element: <UsersAddEdit />,
-          }
-
+          },
+          {
+            path: "/setting",
+            element: <Setting />,
+          },
         ],
       },
     ],

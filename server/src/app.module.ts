@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { GqlAuthGuard } from './auth/guards/gql-auth.guard';
+
 import { UsersModule } from './users/users.module';
 import { CompaniesModule } from './companies/companies.module';
 import { CustomerModule } from './customer/customer.module';
@@ -19,6 +22,7 @@ import { BookingsModule } from './bookings/bookings.module';
 import { UsersHasRolesModule } from './users_has_roles/users_has_roles.module';
 import { RolesHasPermissionsModule } from './roles_has_permissions/roles_has_permissions.module';
 import { CustomerCompaniesModule } from './customer-companies/customer-companies.module';
+import { CompaniesHasUsersModule } from './companies-has-users/companies-has-users.module';
 
 @Module({
   imports: [
@@ -51,8 +55,14 @@ import { CustomerCompaniesModule } from './customer-companies/customer-companies
     UsersHasRolesModule,
     RolesHasPermissionsModule,
     CustomerCompaniesModule,
+    CompaniesHasUsersModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: GqlAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

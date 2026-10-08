@@ -7,6 +7,10 @@ import { Permission } from './permissions/entities/permission.entity';
 import { UsersHasRoles } from './users_has_roles/entities/users_has_roles.entity';
 import { RolesHasPermissions } from './roles_has_permissions/entities/roles_has_permissions.entity';
 import { Company } from './companies/entities/company.entity';
+import { BookingStatus } from './booking-status/entities/booking-status.entity';
+import { AccommodationType } from './accommodation-types/entities/accommodation-type.entity';
+import { Location } from './locations/entities/location.entity';
+import { CompaniesHasUsers } from './companies-has-users/entities/companies-has-users.entity';
 
 async function seed() {
   await AppDataSource.initialize();
@@ -29,7 +33,8 @@ async function seed() {
       "users_has_roles",
       "permission",
       "role",
-      "user"
+      "user",
+      "companies_has_users"
     RESTART IDENTITY CASCADE;
   `);
 
@@ -39,13 +44,17 @@ async function seed() {
   const userRoleRepo = AppDataSource.getRepository(UsersHasRoles);
   const rolePermissionRepo = AppDataSource.getRepository(RolesHasPermissions);
   const companyRepo = AppDataSource.getRepository(Company);
+  const bookingStatusRepo = AppDataSource.getRepository(BookingStatus);
+  const accommodationTypeRepo = AppDataSource.getRepository(AccommodationType);
+  const locationRepo = AppDataSource.getRepository(Location);
+  const companiesHasUsersRepo = AppDataSource.getRepository(CompaniesHasUsers);
 
-  const password = await bcrypt.hash('admin@123', 10);
+  const password = await bcrypt.hash('admin123', 10);
 
   const users = await userRepo.save([
     userRepo.create({
       name: 'Admin',
-      email: 'admin@gmail.com',
+      email: 'admin123@gmail.com',
       password,
     }),
     userRepo.create({
@@ -59,6 +68,21 @@ async function seed() {
       password,
     }),
   ]);
+
+  let adminCompany = await companyRepo.save(
+    companyRepo.create({
+      name: 'Admin Company',
+      address: 'Ahmedabad, Gujarat',
+      industry: 'Hospitality',
+    }),
+  );
+
+  await companiesHasUsersRepo.save(
+    companiesHasUsersRepo.create({
+      user: users[0],
+      company: adminCompany,
+    }),
+  );
 
   const roles = await roleRepo.save([
     roleRepo.create({
@@ -117,13 +141,37 @@ async function seed() {
     }),
   ]);
 
-  await companyRepo.save(
-    companyRepo.create({
-      name: 'Demo Company',
-      address: 'Ahmedabad, Gujarat',
-      industry: 'Hospitality',
+  await bookingStatusRepo.save([
+    bookingStatusRepo.create({ name: 'Pending' }),
+    bookingStatusRepo.create({ name: 'Confirmed' }),
+    bookingStatusRepo.create({ name: 'Cancelled' }),
+  ]);
+
+  await accommodationTypeRepo.save([
+    accommodationTypeRepo.create({ name: 'Hotel', description: 'Hotel' }),
+    accommodationTypeRepo.create({ name: 'Hostel', description: 'Hostel' }),
+    accommodationTypeRepo.create({
+      name: 'Apartment',
+      description: 'Apartment',
     }),
-  );
+  ]);
+
+  await locationRepo.save([
+    locationRepo.create({
+      name: 'Location 1',
+      city: 'City 1',
+      state: 'State 1',
+      country: 'Country 1',
+      address: 'Address 1',
+    }),
+    locationRepo.create({
+      name: 'Location 2',
+      city: 'City 2',
+      state: 'State 2',
+      country: 'Country 2',
+      address: 'Address 2',
+    }),
+  ]);
 
   await queryRunner.release();
   await AppDataSource.destroy();

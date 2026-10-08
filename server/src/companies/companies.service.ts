@@ -31,12 +31,23 @@ export class CompaniesService {
   }
 
   async findOne(id: number) {
-    let company = await this.companyRepo.findOneBy({ id });
+    let company = await this.companyRepo.findOne({
+      where: { id },
+      relations: {
+        customerCompanies: {
+          Customer: true,
+        },
+        companiesHasUsers: {
+          user: true,
+        },
+      },
+    });
     if (!company) {
       throw new NotFoundException(`Company with ID ${id} not found`);
     }
     return company;
   }
+
   async update(id: number, updateCompanyInput: UpdateCompanyInput) {
     let company = await this.companyRepo.findOneBy({ id });
     if (!company) {

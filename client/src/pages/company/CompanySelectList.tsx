@@ -1,51 +1,51 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@primereact/ui/button";
 import { DataTable } from "@primereact/ui/datatable";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { AllCompany, DELETE_COMPANY } from "../../services/Apis/Company";
+import { useQuery } from "@apollo/client/react";
+import { USER_COMPANIES } from "../../services/Apis/Users.ts";
+import { useAuth } from "../Layout/ContextProvider.tsx";
 
-type Company = {
+interface Icompanies {
   id: number;
   name: string;
   address: string;
   industry: string;
-};
+}
+interface IuserCompany {
+  company: {
+    id: number;
+    name: string;
+    address: string;
+    industry: string;
+  };
+}
 
-export function Company() {
+export function CompanySelectList() {
+  const { user } = useAuth();
+
   const navigate = useNavigate();
-    const [deleteCompany] = useMutation(DELETE_COMPANY);
 
-  const { loading, error, data } = useQuery(AllCompany) as {
+  const { loading, error, data } = useQuery(USER_COMPANIES, {
+    variables: { id: user?.sub },
+  }) as {
     loading: boolean;
     error: Error | undefined;
-    data: { companies: Company[] };
+    data: { user: { companiesHasUsers: IuserCompany[] } };
   };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  console.log("Company data:", data.companies);
+  console.log("Company data:", data);
 
-  const companies: Company[] = data.companies.map((company: Company) => ({
-    id: company.id,
-    name: company.name,
-    address: company.address,
-    industry: company.industry,
-  }));
-
-
-  function handleDeleteCompany(id: number) { 
-    if(window.confirm("Are you sure you want to delete this company?")) {
-        deleteCompany({
-            variables: {
-                id: id,
-            },
-            refetchQueries: [{ query: AllCompany }],
-            awaitRefetchQueries: true,
-        });
-       
-      }
-  }
+  const companies = data.user.companiesHasUsers
+    .map((c: IuserCompany) => c.company)
+    .map((company) => ({
+      id: company.id,
+      name: company.name,
+      address: company.address,
+      industry: company.industry,
+    }));
 
   return (
     <div className="p-4">
@@ -55,13 +55,6 @@ export function Company() {
 
           <p className="text-color-secondary mt-2 mb-0">Manage companies</p>
         </div>
-
-        <Button
-          label="Add Company"
-          onClick={() => navigate("/company-add-edit")}
-        >
-          Add
-        </Button>
       </div>
 
       <div className="surface-card border-round shadow-2 p-3">
@@ -93,7 +86,7 @@ export function Company() {
               </DataTable.THead>
 
               <DataTable.TBody>
-                {({ item, index }: { item: Company; index: number }) => (
+                {({ item, index }: { item: Icompanies; index: number }) => (
                   <DataTable.Row key={item.id}>
                     <DataTable.Cell>{index + 1}</DataTable.Cell>
 
@@ -107,27 +100,19 @@ export function Company() {
 
                     <DataTable.Cell>
                       <div className="flex gap-2">
-                        <Button severity="info" size="small" rounded text
-                        onClick={() => navigate("/company-add-edit/" , { state: { company: item } })}
-                        >
-                          Edit
-                        </Button>
-
-                        <Button severity="danger" size="small" rounded text
-                        onClick={() => handleDeleteCompany(item.id)}
-                        >
-                          Delete
-                        </Button>
-
                         <Button
-                          severity="success"
-                          size="small"  
-                        rounded
-                        onClick={() => navigate("/company-users", { state: { companyId: item.id } })}
+                          severity="info"
+                          size="small"
+                          rounded
+                          text
+                          onClick={() =>
+                            navigate("/customer", {
+                              state: { companyId: item.id },
+                            })
+                          }
                         >
-                          Company Users
+                          select
                         </Button>
-                        
                       </div>
                     </DataTable.Cell>
                   </DataTable.Row>

@@ -9,13 +9,16 @@ export class AccommodationsResolver {
   constructor(private readonly accommodationsService: AccommodationsService) {}
 
   @Mutation(() => Accommodation)
-  createAccommodation(@Args('createAccommodationInput') createAccommodationInput: CreateAccommodationInput) {
+  createAccommodation(
+    @Args('createAccommodationInput')
+    createAccommodationInput: CreateAccommodationInput,
+  ) {
     return this.accommodationsService.create(createAccommodationInput);
   }
 
   @Query(() => [Accommodation], { name: 'accommodations' })
-  findAll() {
-    return this.accommodationsService.findAll();
+  findAll(@Args('SearchLocation', { nullable: true }) searchLocation?: string) {
+    return this.accommodationsService.findAll(searchLocation);
   }
 
   @Query(() => Accommodation, { name: 'accommodation' })
@@ -24,8 +27,14 @@ export class AccommodationsResolver {
   }
 
   @Mutation(() => Accommodation)
-  updateAccommodation(@Args('updateAccommodationInput') updateAccommodationInput: UpdateAccommodationInput) {
-    return this.accommodationsService.update(updateAccommodationInput.id, updateAccommodationInput);
+  updateAccommodation(
+    @Args('updateAccommodationInput')
+    updateAccommodationInput: UpdateAccommodationInput,
+  ) {
+    return this.accommodationsService.update(
+      updateAccommodationInput.id,
+      updateAccommodationInput,
+    );
   }
 
   @Mutation(() => Accommodation)

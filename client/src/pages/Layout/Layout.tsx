@@ -11,8 +11,12 @@ import { Avatar } from "@primereact/ui/avatar";
 import { Button } from "@primereact/ui/button";
 import { Menu } from "@primereact/ui/menu";
 import { Sidebar } from "@primereact/ui/sidebar";
+import { useAuth } from "../Layout/ContextProvider.tsx";
 
 export function Layout() {
+  const { logout, user } = useAuth();
+
+
   const navigate = useNavigate();
   const isMobile = useIsMobile(1024);
 
@@ -35,7 +39,6 @@ export function Layout() {
                     <Sidebar.GroupLabel>Navigation</Sidebar.GroupLabel>
                     <Sidebar.GroupContent>
                       <Sidebar.Menu>
-                        
                         <Sidebar.MenuItem>
                           <Sidebar.MenuButton
                             onClick={() => navigate("/customer")}
@@ -60,6 +63,7 @@ export function Layout() {
                             <span> Users </span>
                           </Sidebar.MenuButton>
                         </Sidebar.MenuItem>
+
                         <Sidebar.MenuItem>
                           <Sidebar.MenuButton
                             onClick={() => navigate("/accommodation")}
@@ -68,6 +72,7 @@ export function Layout() {
                             <span>Accommodation</span>
                           </Sidebar.MenuButton>
                         </Sidebar.MenuItem>
+
                         <Sidebar.MenuItem>
                           <Sidebar.MenuButton
                             onClick={() => navigate("/booking")}
@@ -104,12 +109,17 @@ export function Layout() {
                               <Menu.List>
                                 <Menu.Label>user@gmail.com</Menu.Label>
                                 <Menu.Separator />
-                                <Menu.Item>
+                                <Menu.Item onClick={() => navigate("/setting")}>
                                   <Cog />
                                   Settings
                                 </Menu.Item>
                                 <Menu.Separator />
-                                <Menu.Item onClick={() => navigate("/login")}>
+                                <Menu.Item
+                                  onClick={() => {
+                                    logout();
+                                    navigate("/login");
+                                  }}
+                                >
                                   <SignOut />
                                   Sign out
                                 </Menu.Item>

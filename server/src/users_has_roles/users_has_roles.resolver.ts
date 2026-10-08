@@ -8,8 +8,24 @@ import { UpdateUsersHasRoleInput } from './dto/update-users_has_role.input';
 export class UsersHasRolesResolver {
   constructor(private readonly usersHasRolesService: UsersHasRolesService) {}
 
+  @Mutation(() => [UsersHasRoles])
+  async assignRolesToUser(
+    @Args('userId', { type: () => Int }) userId: number,
+    @Args('roleIds', { type: () => String }) roleIds: String,
+  ) {
+    let parsedRoleIds = roleIds.split(',').map((id) => parseInt(id.trim(), 10));
+
+    return await this.usersHasRolesService.assignRolesToUser(
+      userId,
+      parsedRoleIds,
+    );
+  }
+
   @Mutation(() => UsersHasRoles)
-  createUsersHasRole(@Args('createUsersHasRoleInput') createUsersHasRoleInput: CreateUsersHasRoleInput) {
+  createUsersHasRole(
+    @Args('createUsersHasRoleInput')
+    createUsersHasRoleInput: CreateUsersHasRoleInput,
+  ) {
     return this.usersHasRolesService.create(createUsersHasRoleInput);
   }
 
@@ -24,8 +40,14 @@ export class UsersHasRolesResolver {
   }
 
   @Mutation(() => UsersHasRoles)
-  updateUsersHasRole(@Args('updateUsersHasRoleInput') updateUsersHasRoleInput: UpdateUsersHasRoleInput) {
-    return this.usersHasRolesService.update(updateUsersHasRoleInput.id, updateUsersHasRoleInput);
+  updateUsersHasRole(
+    @Args('updateUsersHasRoleInput')
+    updateUsersHasRoleInput: UpdateUsersHasRoleInput,
+  ) {
+    return this.usersHasRolesService.update(
+      updateUsersHasRoleInput.id,
+      updateUsersHasRoleInput,
+    );
   }
 
   @Mutation(() => UsersHasRoles)
