@@ -6,11 +6,32 @@ import { UpdateRolesHasPermissionInput } from './dto/update-roles_has_permission
 
 @Resolver(() => RolesHasPermissions)
 export class RolesHasPermissionsResolver {
-  constructor(private readonly rolesHasPermissionsService: RolesHasPermissionsService) {}
+  constructor(
+    private readonly rolesHasPermissionsService: RolesHasPermissionsService,
+  ) {}
 
-  @Mutation(() => RolesHasPermissions)
-  createRolesHasPermission(@Args('createRolesHasPermissionInput') createRolesHasPermissionInput: CreateRolesHasPermissionInput) {
-    return this.rolesHasPermissionsService.create(createRolesHasPermissionInput);
+  @Mutation(() => [RolesHasPermissions])
+  async assignPermissionsToRole(
+    @Args('roleId', { type: () => Int }) roleId: number,
+    @Args('permissionIds', { type: () => String }) permissionIds: String,
+  ) {
+    const permissionIdsArray = permissionIds
+      .split(',')
+      .map((id) => parseInt(id.trim(), 10));
+    return await this.rolesHasPermissionsService.assignPermissionsToRole(
+      roleId,
+      permissionIdsArray,
+    );
+  }
+
+  @Mutation(() => RolesHasPermissions) 
+  createRolesHasPermission(
+    @Args('createRolesHasPermissionInput')
+    createRolesHasPermissionInput: CreateRolesHasPermissionInput,
+  ) {
+    return this.rolesHasPermissionsService.create(
+      createRolesHasPermissionInput,
+    );
   }
 
   @Query(() => [RolesHasPermissions], { name: 'rolesHasPermissions' })
@@ -24,8 +45,14 @@ export class RolesHasPermissionsResolver {
   }
 
   @Mutation(() => RolesHasPermissions)
-  updateRolesHasPermission(@Args('updateRolesHasPermissionInput') updateRolesHasPermissionInput: UpdateRolesHasPermissionInput) {
-    return this.rolesHasPermissionsService.update(updateRolesHasPermissionInput.id, updateRolesHasPermissionInput);
+  updateRolesHasPermission(
+    @Args('updateRolesHasPermissionInput')
+    updateRolesHasPermissionInput: UpdateRolesHasPermissionInput,
+  ) {
+    return this.rolesHasPermissionsService.update(
+      updateRolesHasPermissionInput.id,
+      updateRolesHasPermissionInput,
+    );
   }
 
   @Mutation(() => RolesHasPermissions)

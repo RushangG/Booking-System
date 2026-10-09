@@ -3,18 +3,18 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useMutation } from "@apollo/client/react";
-
-import {
-  CREATE_CUSTOMER,
-  UPDATE_CUSTOMER,
-} from "../../services/Apis/Customer";
+import { CREATE_CUSTOMER, UPDATE_CUSTOMER } from "../../services/Apis/Customer";
 
 export function CustomerAddEdit() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const customer = location.state?.customer;
+  const companyId = location.state?.companyId;
+  const companyName = location.state?.companyName;
 
+  console.log("Company ID:", companyId);
+  console.log("Company Name:", companyName);
   console.log("Customer data:", customer);
 
   const [formData, setFormData] = useState({
@@ -70,6 +70,7 @@ export function CustomerAddEdit() {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
+          companyId: companyId ? Number(companyId) : null,
         },
       });
 
@@ -99,7 +100,6 @@ export function CustomerAddEdit() {
         </div>
 
         <form onSubmit={handleSubmit}>
-         
           <div className="mb-4">
             <label htmlFor="name" className="block font-medium mb-2">
               Name
@@ -116,7 +116,6 @@ export function CustomerAddEdit() {
             />
           </div>
 
-          
           <div className="mb-4">
             <label htmlFor="email" className="block font-medium mb-2">
               Email
@@ -151,10 +150,20 @@ export function CustomerAddEdit() {
             />
           </div>
 
+          <div className="mb-4"> </div>
+
           <Button
             type="submit"
             className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
-          > {customer ? "Update" : "Create"} </Button>
+          >
+            {" "}
+            {customer ? "Update" : "Create"}
+          </Button>
+          {companyName && (
+            <p>
+              Created customer for Company <br /> <b>{companyName}</b>
+            </p>
+          )}
         </form>
       </div>
     </div>

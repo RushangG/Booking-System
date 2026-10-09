@@ -11,6 +11,7 @@ import {
 } from "../../services/Apis/Booking";
 import { CUSTOMER_ALL } from "../../services/Apis/Customer";
 import { ALL_ACCOMMODATIONS } from "../../services/Apis/Accommodation";
+import { useAuth } from "../../pages/Layout/ContextProvider";
 
 type Customer = { id: number; name: string; email: string };
 type Accommodation = { id: number; name: string };
@@ -23,9 +24,12 @@ function formatDateForInput(dateStr?: string) {
 }
 
 export function BookingAddEdit() {
+  const { companyId } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
   const booking = location.state?.booking;
+  console.log("company data:", companyId, booking);
 
   const [formData, setFormData] = useState({
     customer_id: "",
@@ -49,8 +53,9 @@ export function BookingAddEdit() {
 
   const { data: customersData } = useQuery(CUSTOMER_ALL) as {
     data: { customerAll: Customer[] };
-  };
+  }; 
 
+  
   const { data: accommodationsData } = useQuery(ALL_ACCOMMODATIONS) as {
     data: { accommodations: Accommodation[] };
   };
@@ -62,7 +67,9 @@ export function BookingAddEdit() {
   const [createBooking] = useMutation(CREATE_BOOKING);
   const [updateBooking] = useMutation(UPDATE_BOOKING);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -114,7 +121,9 @@ export function BookingAddEdit() {
             {booking ? "Update Booking" : "Create Booking"}
           </h2>
           <p className="text-color-secondary mt-2">
-            {booking ? "Update booking details" : "Fill in details to create a new booking"}
+            {booking
+              ? "Update booking details"
+              : "Fill in details to create a new booking"}
           </p>
         </div>
 
@@ -141,7 +150,10 @@ export function BookingAddEdit() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="accommodation_id" className="block font-medium mb-2">
+            <label
+              htmlFor="accommodation_id"
+              className="block font-medium mb-2"
+            >
               Accommodation
             </label>
             <select
@@ -212,7 +224,10 @@ export function BookingAddEdit() {
             />
           </div>
 
-          <Button type="submit" className="w-full h-2rem border-1 border-round p-2">
+          <Button
+            type="submit"
+            className="w-full h-2rem border-1 border-round p-2"
+          >
             {booking ? "Update" : "Create"}
           </Button>
         </form>
@@ -220,4 +235,3 @@ export function BookingAddEdit() {
     </div>
   );
 }
-

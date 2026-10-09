@@ -5,16 +5,34 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from './entities/customer.entity';
 import { CustomerRepository } from './customer.repository';
+import { CustomerCompaniesService } from '../customer-companies/customer-companies.service';
+
 @Injectable()
 export class CustomerService {
   constructor(
     @InjectRepository(CustomerRepository)
     private readonly customerRepo: CustomerRepository,
+    private readonly customerCompanyRepo: CustomerCompaniesService,
   ) {}
 
-  create(createCustomerInput: CreateCustomerInput) {
+  async create(createCustomerInput: CreateCustomerInput, companyId?: number) {
     const customer = this.customerRepo.create(createCustomerInput);
-    return this.customerRepo.save(customer);
+
+    let saveCustomer = await this.customerRepo.save(customer);
+
+    if (companyId) {
+      try {
+        await this.customerCompanyRepo.createCustomerCompany(
+          saveCustomer.id,
+          companyId,
+        );
+      } catch (error) {
+        console.error('Error creating customer-company relationship:', error);
+        throw new Error('Failed to create customer-company relationship');
+      }
+    }
+
+    return saveCustomer;
   }
 
   async findAll(search?: string) {

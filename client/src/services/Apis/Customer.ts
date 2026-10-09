@@ -11,20 +11,16 @@ export const CUSTOMER_ALL = gql`
   }
 `;
 
-
-
 export const CREATE_CUSTOMER = gql`
   mutation CreateCustomer(
     $name: String!
     $email: String!
     $phone: String!
+    $companyId: Int
   ) {
     createCustomer(
-      createCustomerInput: {
-        name: $name
-        email: $email
-        phone: $phone
-      }
+      createCustomerInput: { name: $name, email: $email, phone: $phone }
+      companyId: $companyId
     ) {
       id
       name

@@ -3,11 +3,7 @@ import { Button } from "@primereact/ui/button";
 import { DataTable } from "@primereact/ui/datatable";
 import { useQuery, useMutation } from "@apollo/client/react";
 
-import {
-  USER_ALL,
-  DELETE_USER,
-} from "../../services/Apis/Users";
-
+import { USER_ALL, DELETE_USER } from "../../services/Apis/Users";
 
 type User = {
   id: number;
@@ -45,11 +41,7 @@ export function Users() {
   }));
 
   function handleDeleteUser(id: number) {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this user?"
-      )
-    ) {
+    if (window.confirm("Are you sure you want to delete this user?")) {
       deleteUser({
         variables: {
           id: id,
@@ -64,21 +56,14 @@ export function Users() {
     <div className="p-4">
       <div className="flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="text-2xl font-bold m-0">
-            Users
-          </h2>
+          <h2 className="text-2xl font-bold m-0">Users</h2>
 
-          <p className="text-color-secondary mt-2 mb-0">
-            Manage users
-          </p>
+          <p className="text-color-secondary mt-2 mb-0">Manage users</p>
         </div>
 
-          <Button
-            label="Add User"
-            onClick={() => navigate("/user-add-edit")}
-          >
-            Add
-          </Button>
+        <Button label="Add User" onClick={() => navigate("/user-add-edit")}>
+          Add
+        </Button>
       </div>
 
       <div className="surface-card border-round shadow-2 p-3">
@@ -87,87 +72,56 @@ export function Users() {
             <DataTable.Table>
               <DataTable.THead>
                 <DataTable.THeadRow>
-
                   <DataTable.THeadCell>
-                    <DataTable.THeadTitle>
-                      No.
-                    </DataTable.THeadTitle>
+                    <DataTable.THeadTitle>No.</DataTable.THeadTitle>
                   </DataTable.THeadCell>
 
                   <DataTable.THeadCell>
-                    <DataTable.THeadTitle>
-                      Name
-                    </DataTable.THeadTitle>
+                    <DataTable.THeadTitle>Name</DataTable.THeadTitle>
                   </DataTable.THeadCell>
 
                   <DataTable.THeadCell>
-                    <DataTable.THeadTitle>
-                      Email
-                    </DataTable.THeadTitle>
+                    <DataTable.THeadTitle>Email</DataTable.THeadTitle>
                   </DataTable.THeadCell>
 
                   <DataTable.THeadCell>
-                    <DataTable.THeadTitle>
-                      Created At
-                    </DataTable.THeadTitle>
+                    <DataTable.THeadTitle>Created At</DataTable.THeadTitle>
                   </DataTable.THeadCell>
 
                   <DataTable.THeadCell>
-                    <DataTable.THeadTitle>
-                      Actions
-                    </DataTable.THeadTitle>
+                    <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
                   </DataTable.THeadCell>
-
                 </DataTable.THeadRow>
               </DataTable.THead>
 
               <DataTable.TBody>
-                {({
-                  item,
-                  index,
-                }: {
-                  item: User;
-                  index: number;
-                }) => (
+                {({ item, index }: { item: User; index: number }) => (
                   <DataTable.Row key={item.id}>
+                    <DataTable.Cell>{index + 1}</DataTable.Cell>
 
                     <DataTable.Cell>
-                      {index + 1}
+                      <span className="font-medium">{item.name}</span>
                     </DataTable.Cell>
 
-                    <DataTable.Cell>
-                      <span className="font-medium">
-                        {item.name}
-                      </span>
-                    </DataTable.Cell>
+                    <DataTable.Cell>{item.email}</DataTable.Cell>
 
                     <DataTable.Cell>
-                      {item.email}
-                    </DataTable.Cell>
-
-                    <DataTable.Cell>
-                      {new Date(
-                        item.createdAt
-                      ).toLocaleDateString()}
+                      {new Date(item.createdAt).toLocaleDateString()}
                     </DataTable.Cell>
 
                     <DataTable.Cell>
                       <div className="flex gap-2">
-
                         <Button
                           severity="info"
                           size="small"
                           rounded
                           text
                           onClick={() =>
-                            navigate(
-                              "/user-add-edit",
-                              {
-                                state: {
-                                  user: item,
-                                },
-                              }
-                            )
+                            navigate("/user-add-edit", {
+                              state: {
+                                user: item,
+                              },
+                            })
                           }
                         >
                           Edit
@@ -178,16 +132,28 @@ export function Users() {
                           size="small"
                           rounded
                           text
-                          onClick={() =>
-                            handleDeleteUser(item.id)
-                          }
+                          onClick={() => handleDeleteUser(item.id)}
                         >
                           Delete
                         </Button>
 
+                        <Button
+                          severity="success"
+                          size="small"
+                          rounded
+                          text
+                          onClick={() =>
+                            navigate("/assign-role-to-user", {
+                              state: {
+                                userId: item.id,
+                              },
+                            })
+                          }
+                        >
+                          Assign Role
+                        </Button>
                       </div>
                     </DataTable.Cell>
-
                   </DataTable.Row>
                 )}
               </DataTable.TBody>

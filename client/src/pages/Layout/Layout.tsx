@@ -16,7 +16,6 @@ import { useAuth } from "../Layout/ContextProvider.tsx";
 export function Layout() {
   const { logout, user } = useAuth();
 
-
   const navigate = useNavigate();
   const isMobile = useIsMobile(1024);
 
@@ -79,6 +78,14 @@ export function Layout() {
                           >
                             <Users />
                             <span>Booking</span>
+                          </Sidebar.MenuButton>
+                        </Sidebar.MenuItem>
+                        <Sidebar.MenuItem>
+                          <Sidebar.MenuButton
+                            onClick={() => navigate("/roles")}
+                          >
+                            <Users />
+                            <span>Roles</span>
                           </Sidebar.MenuButton>
                         </Sidebar.MenuItem>
                       </Sidebar.Menu>

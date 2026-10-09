@@ -12,14 +12,11 @@ export class CustomerCompaniesService {
     private readonly customerCompaniesRepo: Repository<CustomerCompany>,
   ) {}
 
-  async assignCustomersToCompany(
-    companyIds: number[],
-    customerId: number,
-  ) {
-    // Delete existing customer 
+  async assignCustomersToCompany(companyIds: number[], customerId: number) {
+    // Delete existing customer
     await this.customerCompaniesRepo.delete({ Customer: { id: customerId } });
 
-    // Create new customer-company 
+    // Create new customer-company
     const newCustomerCompanies = companyIds.map((companyId) => {
       const newCustomerCompany = this.customerCompaniesRepo.create({
         Customer: { id: customerId },
@@ -39,6 +36,28 @@ export class CustomerCompaniesService {
     });
 
     return customerCompanies;
+  }
+
+  async removeCustomerFromCompany(companyId: number, customerId: number) {
+    try {
+      await this.customerCompaniesRepo.delete({
+        Company: { id: companyId },
+        Customer: { id: customerId },
+      });
+
+      return `Customer with ID ${customerId} removed from company with ID ${companyId}`;
+    } catch (error) {
+      console.error('Error removing customer from company:', error);
+      throw new Error('Failed to remove customer from company');
+    }
+  }
+
+ async createCustomerCompany(customerId: number, companyId: number) {
+    const newCustomerCompany = this.customerCompaniesRepo.create({
+      Customer: { id: customerId },
+      Company: { id: companyId },
+    });
+    return await this.customerCompaniesRepo.save(newCustomerCompany);
   }
 
   create(createCustomerCompanyInput: CreateCustomerCompanyInput) {

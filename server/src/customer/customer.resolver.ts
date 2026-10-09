@@ -11,8 +11,9 @@ export class CustomerResolver {
   @Mutation(() => Customer)
   createCustomer(
     @Args('createCustomerInput') createCustomerInput: CreateCustomerInput,
+    @Args('companyId', { type: () => Int, nullable: true }) companyId?: number,
   ) {
-    return this.customerService.create(createCustomerInput);
+    return this.customerService.create(createCustomerInput, companyId);
   }
 
   @Query(() => [Customer], { name: 'customerAll' })

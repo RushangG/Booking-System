@@ -25,6 +25,17 @@ export class CustomerCompaniesResolver {
     );
   }
 
+  @Mutation(() => String)
+  async removeCustomerFromCompany(
+    @Args('companyId', { type: () => Int }) companyId: number,
+    @Args('customerId', { type: () => Int }) customerId: number,
+  ) {
+    return await this.customerCompaniesService.removeCustomerFromCompany(
+      companyId,
+      customerId,
+    );
+  }
+
   @Mutation(() => CustomerCompany)
   createCustomerCompany(
     @Args('createCustomerCompanyInput')

@@ -13,10 +13,7 @@ export class CompaniesHasUsersService {
     private readonly companiesHasUsersRepo: Repository<CompaniesHasUsers>,
   ) {}
 
- 
-
   async assignUsersToCompany(userIds: number[], companyId: number) {
-   
     await this.companiesHasUsersRepo.delete({ company: { id: companyId } });
 
     let newUserCompanies: CompaniesHasUsers[] = userIds.map((userId) => {
@@ -36,6 +33,20 @@ export class CompaniesHasUsersService {
         company: true,
       },
     });
+  }
+
+  async removeUserFromCompany(companyId: number, userId: number) {
+    try {
+      await this.companiesHasUsersRepo.delete({
+        company: { id: companyId },
+        user: { id: userId },
+      });
+
+      return `User with ID ${userId} removed from company with ID ${companyId}`;
+    } catch (error) {
+      console.error('Error removing user from company:', error);
+      throw new Error('Failed to remove user from company');
+    }
   }
 
   create(createCompaniesHasUserInput: CreateCompaniesHasUserInput) {

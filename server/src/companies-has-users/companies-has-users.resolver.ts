@@ -23,6 +23,17 @@ export class CompaniesHasUsersResolver {
     );
   }
 
+  @Mutation(() => String)
+  async removeUserFromCompany(
+    @Args('companyId', { type: () => Int }) companyId: number,
+    @Args('userId', { type: () => Int }) userId: number,
+  ) {
+    return await this.companiesHasUsersService.removeUserFromCompany(
+      companyId,
+      userId,
+    );
+  }
+
   @Mutation(() => CompaniesHasUsers)
   createCompaniesHasUser(
     @Args('createCompaniesHasUserInput')

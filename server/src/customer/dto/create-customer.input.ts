@@ -12,7 +12,6 @@ export class CreateCustomerInput {
   @Field()
   @IsNotEmpty()
   @IsString()
-  @Min(3, { message: 'Name must be at least 3 characters long' })
   name: string;
 
   @Field()

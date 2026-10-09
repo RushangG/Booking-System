@@ -6,6 +6,11 @@ import { CustomerCompany } from './entities/customer-company.entity';
 import { CustomerCompaniesRepository } from './customer-companies.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([CustomerCompany])],
-  providers: [CustomerCompaniesResolver, CustomerCompaniesService, CustomerCompaniesRepository],
+  providers: [
+    CustomerCompaniesResolver,
+    CustomerCompaniesService,
+    CustomerCompaniesRepository,
+  ],
+  exports: [CustomerCompaniesService, CustomerCompaniesRepository],
 })
 export class CustomerCompaniesModule {}

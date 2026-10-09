@@ -4,7 +4,7 @@ import { DataTable } from "@primereact/ui/datatable";
 import { useQuery } from "@apollo/client/react";
 import { USER_COMPANIES } from "../../services/Apis/Users.ts";
 import { useAuth } from "../Layout/ContextProvider.tsx";
-
+import { SignOut } from "@primeicons/react/sign-out";
 interface Icompanies {
   id: number;
   name: string;
@@ -21,7 +21,7 @@ interface IuserCompany {
 }
 
 export function CompanySelectList() {
-  const { user } = useAuth();
+  const { user, logout, setCompany } = useAuth();
 
   const navigate = useNavigate();
 
@@ -55,73 +55,91 @@ export function CompanySelectList() {
 
           <p className="text-color-secondary mt-2 mb-0">Manage companies</p>
         </div>
+
+        <Button
+          severity="danger"
+          onClick={() => {
+            logout();
+            navigate("/login");
+          }}
+        >
+          <SignOut />
+          Sign out
+        </Button>
       </div>
 
-      <div className="surface-card border-round shadow-2 p-3">
-        <DataTable.Root data={companies}>
-          <DataTable.TableContainer>
-            <DataTable.Table>
-              <DataTable.THead>
-                <DataTable.THeadRow>
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>No.</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
+      {companies.length === 0 ? (
+        <div className="surface-card border-round shadow-2 p-3">
+          <p>No companies available. Please Contact your administrator.</p>
+        </div>
+      ) : (
+        <div className="surface-card border-round shadow-2 p-3">
+          <DataTable.Root data={companies}>
+            <DataTable.TableContainer>
+              <DataTable.Table>
+                <DataTable.THead>
+                  <DataTable.THeadRow>
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>No.</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
 
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>Name</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>Name</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
 
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>Address</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>Address</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
 
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>Industry</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>Industry</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
 
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
-                </DataTable.THeadRow>
-              </DataTable.THead>
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
+                  </DataTable.THeadRow>
+                </DataTable.THead>
 
-              <DataTable.TBody>
-                {({ item, index }: { item: Icompanies; index: number }) => (
-                  <DataTable.Row key={item.id}>
-                    <DataTable.Cell>{index + 1}</DataTable.Cell>
+                <DataTable.TBody>
+                  {({ item, index }: { item: Icompanies; index: number }) => (
+                    <DataTable.Row key={item.id}>
+                      <DataTable.Cell>{index + 1}</DataTable.Cell>
 
-                    <DataTable.Cell>
-                      <span className="font-medium">{item.name}</span>
-                    </DataTable.Cell>
+                      <DataTable.Cell>
+                        <span className="font-medium">{item.name}</span>
+                      </DataTable.Cell>
 
-                    <DataTable.Cell>{item.address}</DataTable.Cell>
+                      <DataTable.Cell>{item.address}</DataTable.Cell>
 
-                    <DataTable.Cell>{item.industry}</DataTable.Cell>
+                      <DataTable.Cell>{item.industry}</DataTable.Cell>
 
-                    <DataTable.Cell>
-                      <div className="flex gap-2">
-                        <Button
-                          severity="info"
-                          size="small"
-                          rounded
-                          text
-                          onClick={() =>
-                            navigate("/customer", {
-                              state: { companyId: item.id },
-                            })
-                          }
-                        >
-                          select
-                        </Button>
-                      </div>
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                )}
-              </DataTable.TBody>
-            </DataTable.Table>
-          </DataTable.TableContainer>
-        </DataTable.Root>
-      </div>
+                      <DataTable.Cell>
+                        <div className="flex gap-2">
+                          <Button
+                            severity="info"
+                            size="small"
+                            rounded
+                            text
+                            onClick={() => {
+                              setCompany(item.id);
+                              navigate("/customer", {
+                                state: { companyId: item.id },
+                              });
+                            }}
+                          >
+                            select
+                          </Button>
+                        </div>
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  )}
+                </DataTable.TBody>
+              </DataTable.Table>
+            </DataTable.TableContainer>
+          </DataTable.Root>
+        </div>
+      )}
     </div>
   );
 }

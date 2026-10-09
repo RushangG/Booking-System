@@ -20,8 +20,27 @@ export class RolesService {
     return this.roleRepo.find();
   }
 
-  findOne(id: number) {
-    return this.roleRepo.findOneBy({ id });
+  async findOne(id: number) {
+    let role = await this.roleRepo.findOne({
+      where: { id },
+      relations: {
+        rolesHasPermissions: {
+          Permission: true,
+        },
+      },
+    });
+    if (!role) {
+      throw new NotFoundException(`Role with ID ${id} not found`);
+    }
+    return role;
+  }
+
+  async findOneByName(name: string) {
+    let role = await this.roleRepo.findOneBy({ name });
+    if (!role) {
+      throw new NotFoundException(`Role with name ${name} not found`);
+    }
+    return role;
   }
 
   update(id: number, updateRoleInput: UpdateRoleInput) {

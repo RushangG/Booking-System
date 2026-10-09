@@ -79,14 +79,8 @@ export const GET_COMPANY_USERS = gql`
 `;
 
 export const ASSIGN_USERS_TO_COMPANY = gql`
-  mutation AssignUsersToCompany(
-    $companyId: Int!
-    $userId: String!
-  ) {
-    assignUsersToCompany(
-      companyId: $companyId
-      userId: $userId
-    ) {
+  mutation AssignUsersToCompany($companyId: Int!, $userId: String!) {
+    assignUsersToCompany(companyId: $companyId, userId: $userId) {
       id
       createdAt
       user {
@@ -101,5 +95,11 @@ export const ASSIGN_USERS_TO_COMPANY = gql`
         industry
       }
     }
+  }
+`;
+
+export const REMOVE_USER_FROM_COMPANY = gql`
+  mutation RemoveUserFromCompany($companyId: Int!, $userId: Int!) {
+    removeUserFromCompany(companyId: $companyId, userId: $userId)
   }
 `;

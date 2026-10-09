@@ -13,7 +13,7 @@ type Company = {
 
 export function Company() {
   const navigate = useNavigate();
-    const [deleteCompany] = useMutation(DELETE_COMPANY);
+  const [deleteCompany] = useMutation(DELETE_COMPANY);
 
   const { loading, error, data } = useQuery(AllCompany) as {
     loading: boolean;
@@ -33,18 +33,16 @@ export function Company() {
     industry: company.industry,
   }));
 
-
-  function handleDeleteCompany(id: number) { 
-    if(window.confirm("Are you sure you want to delete this company?")) {
-        deleteCompany({
-            variables: {
-                id: id,
-            },
-            refetchQueries: [{ query: AllCompany }],
-            awaitRefetchQueries: true,
-        });
-       
-      }
+  function handleDeleteCompany(id: number) {
+    if (window.confirm("Are you sure you want to delete this company?")) {
+      deleteCompany({
+        variables: {
+          id: id,
+        },
+        refetchQueries: [{ query: AllCompany }],
+        awaitRefetchQueries: true,
+      });
+    }
   }
 
   return (
@@ -107,27 +105,71 @@ export function Company() {
 
                     <DataTable.Cell>
                       <div className="flex gap-2">
-                        <Button severity="info" size="small" rounded text
-                        onClick={() => navigate("/company-add-edit/" , { state: { company: item } })}
+                        <Button
+                          severity="info"
+                          size="small"
+                          rounded
+                          text
+                          onClick={() =>
+                            navigate("/company-add-edit/", {
+                              state: { company: item },
+                            })
+                          }
                         >
                           Edit
                         </Button>
 
-                        <Button severity="danger" size="small" rounded text
-                        onClick={() => handleDeleteCompany(item.id)}
+                        <Button
+                          severity="danger"
+                          size="small"
+                          rounded
+                          text
+                          onClick={() => handleDeleteCompany(item.id)}
                         >
                           Delete
                         </Button>
 
                         <Button
                           severity="success"
-                          size="small"  
-                        rounded
-                        onClick={() => navigate("/company-users", { state: { companyId: item.id } })}
+                          size="small"
+                          rounded
+                          onClick={() =>
+                            navigate("/company-users", {
+                              state: { companyId: item.id },
+                            })
+                          }
                         >
                           Company Users
                         </Button>
-                        
+
+                        <Button
+                          severity="warning"
+                          size="small"
+                          rounded
+                          onClick={() =>
+                            navigate("/assign-customer-to-company", {
+                              state: { companyId: item.id },
+                            })
+                          }
+                        >
+                          Assign Customer
+                        </Button>
+
+                        <Button
+                          severity="warning"
+                          size="small"
+                          rounded
+                          onClick={() =>
+                            navigate("/customer-add-edit", {
+                              state: {
+                                companyId: item.id,
+                                companyName: item.name,
+                              },
+                            })
+                          }
+                        >
+                          Add Customer
+                        </Button>
                       </div>
                     </DataTable.Cell>
                   </DataTable.Row>

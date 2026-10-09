@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const ALL_ACCOMMODATIONS = gql`
-  query Accommodations {
-    accommodations {
+  query Accommodations($SearchLocation: String) {
+    accommodations(SearchLocation: $SearchLocation) {
       id
       name
       description
@@ -22,7 +22,9 @@ export const ALL_ACCOMMODATIONS = gql`
 `;
 
 export const CREATE_ACCOMMODATION = gql`
-  mutation CreateAccommodation($createAccommodationInput: CreateAccommodationInput!) {
+  mutation CreateAccommodation(
+    $createAccommodationInput: CreateAccommodationInput!
+  ) {
     createAccommodation(createAccommodationInput: $createAccommodationInput) {
       id
       name
@@ -33,7 +35,9 @@ export const CREATE_ACCOMMODATION = gql`
 `;
 
 export const UPDATE_ACCOMMODATION = gql`
-  mutation UpdateAccommodation($updateAccommodationInput: UpdateAccommodationInput!) {
+  mutation UpdateAccommodation(
+    $updateAccommodationInput: UpdateAccommodationInput!
+  ) {
     updateAccommodation(updateAccommodationInput: $updateAccommodationInput) {
       id
       name
@@ -70,4 +74,3 @@ export const ALL_LOCATIONS = gql`
     }
   }
 `;
-

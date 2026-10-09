@@ -19,6 +19,10 @@ import { BookingAddEdit } from "../pages/booking/BookingAddEdit";
 import { CompanySelectList } from "../pages/company/CompanySelectList";
 import { CompanyUsers } from "../pages/company/CompanyUsers";
 import { Setting } from "../pages/setting/Setting";
+import { AssignRoleToUser } from "../pages/roles/AssignRoleToUser";
+import { AssignCustomerToCompany } from "../pages/company/AssignCustomerToCompany";
+import { Roles } from "../pages/roles/Roles";
+import { PermissionAssignToRole } from "../pages/roles/PermissionAssignToRole";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -80,7 +84,10 @@ export const router = createBrowserRouter([
             path: "/company-users",
             element: <CompanyUsers />,
           },
-
+          {
+            path: "/assign-customer-to-company",
+            element: <AssignCustomerToCompany />,
+          },
           {
             path: "/users",
             element: <Users />,
@@ -88,6 +95,18 @@ export const router = createBrowserRouter([
           {
             path: "/user-add-edit",
             element: <UsersAddEdit />,
+          },
+          {
+            path: "/assign-role-to-user",
+            element: <AssignRoleToUser />,
+          },
+          {
+            path: "/roles",
+            element: <Roles />,
+          },
+          {
+            path: "/permission-assign-to-role",
+            element: <PermissionAssignToRole />,
           },
           {
             path: "/setting",
