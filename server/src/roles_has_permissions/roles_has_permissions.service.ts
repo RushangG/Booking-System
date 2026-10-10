@@ -9,24 +9,26 @@ export class RolesHasPermissionsService {
   constructor(
     @InjectRepository(RolesHasPermissionsRepository)
     private readonly rolesHasPermissionsRepo: RolesHasPermissionsRepository,
-  ) {}
+  ) { }
 
   async assignPermissionsToRole(roleId: number, permissionIds: number[]) {
     // Delete existing permissions for the role
     await this.rolesHasPermissionsRepo.delete({ Role: { id: roleId } });
 
+
+
     // Create new permission-role
-    const newRolesHasPermissions = permissionIds.map((permissionId) => {
-      const newRoleHasPermission = this.rolesHasPermissionsRepo.create({
-        Role: { id: roleId },
-        Permission: { id: permissionId },
+      const newRolesHasPermissions = permissionIds.map((permissionId) => {
+        const newRoleHasPermission = this.rolesHasPermissionsRepo.create({
+          Role: { id: roleId },
+          Permission: { id: permissionId },
+        });
+        return newRoleHasPermission;
       });
-      return newRoleHasPermission;
-    });
 
-    // Save the new associations
-    await this.rolesHasPermissionsRepo.save(newRolesHasPermissions);
-
+      // Save the new associations
+      await this.rolesHasPermissionsRepo.save(newRolesHasPermissions);
+    
     let rolesHasPermissions = await this.rolesHasPermissionsRepo.find({
       where: { Role: { id: roleId } },
       relations: {

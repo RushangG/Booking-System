@@ -103,3 +103,47 @@ export const REMOVE_USER_FROM_COMPANY = gql`
     removeUserFromCompany(companyId: $companyId, userId: $userId)
   }
 `;
+
+
+export const GET_COMPANY_CUSTOMERS = gql`
+  query Company($id: Int!) {
+    company(id: $id) {
+        id
+        name
+        address
+        industry
+        customerCompanies {
+            id
+            Customer {
+                id
+                name
+                email
+                phone
+            }
+        }
+    }
+}`;
+
+export const ASSIGN_CUSTOMERS_TO_COMPANY = gql`
+mutation AssignCustomersToCompany($companyId: Int!, $customerIds: String!) {
+    assignCustomersToCompany(companyId: $companyId, customerIds: $customerIds) {
+        id
+        Customer {
+            id
+            name
+            email
+            phone
+        }
+        Company {
+            id
+            name
+            address
+            industry
+        }
+    }
+}`;
+
+export const REMOVE_CUSTOMER_FROM_COMPANY = gql`
+mutation RemoveCustomerFromCompany($companyId: Int!, $customerId: Int!) {
+    removeCustomerFromCompany(companyId: $companyId, customerId: $customerId)
+}`;

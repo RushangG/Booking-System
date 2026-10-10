@@ -12,23 +12,24 @@ export class CustomerCompaniesService {
     private readonly customerCompaniesRepo: Repository<CustomerCompany>,
   ) {}
 
-  async assignCustomersToCompany(companyIds: number[], customerId: number) {
+  async assignCustomersToCompany(companyId: number, customerIds: number[]) {
     // Delete existing customer
-    await this.customerCompaniesRepo.delete({ Customer: { id: customerId } });
+    await this.customerCompaniesRepo.delete({ Company: { id: companyId } });
 
-    // Create new customer-company
-    const newCustomerCompanies = companyIds.map((companyId) => {
+    // Create new customer-company associations
+    const newCustomerCompanies = customerIds.map((customerId) => {
       const newCustomerCompany = this.customerCompaniesRepo.create({
-        Customer: { id: customerId },
+        Customer: { id: customerId }, 
         Company: { id: companyId },
       });
       return newCustomerCompany;
-    });
-
+    }
+    );
+    // Save the new associations
     await this.customerCompaniesRepo.save(newCustomerCompanies);
 
     let customerCompanies = await this.customerCompaniesRepo.find({
-      where: { Customer: { id: customerId } },
+      where: { Company: { id: companyId } },
       relations: {
         Customer: true,
         Company: true,

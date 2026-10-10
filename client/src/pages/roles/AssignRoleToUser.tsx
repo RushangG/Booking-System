@@ -62,9 +62,10 @@ export function AssignRoleToUser() {
       setSelected(assignedRoleIds);
     }
   }, [userRolesData]);
+
   const handleCheckboxChange = (roleId: number, checked: boolean) => {
     if (checked) {
-      setSelected((prev) => [...prev, roleId]);
+      setSelected((prev) => (prev.includes(roleId) ? prev : [...prev, roleId]));
     } else {
       setSelected((prev) => prev.filter((id) => id !== roleId));
     }
@@ -133,22 +134,24 @@ export function AssignRoleToUser() {
               No roles available to assign.
             </p>
           ) : (
-            <div className="flex flex-column gap-3">
+            <div className="flex flex-column gap-2">
               {roles.map((role) => {
                 const isSelected = selected.includes(role.id);
 
                 return (
-                  <div
+                  <label
                     key={role.id}
-                    className="flex align-items-center gap-3 p-3 border-1 border-200 border-round"
+                    htmlFor={`role-${role.id}`}
+                    className="flex align-items-center gap-3 px-3 py-2 border-1 border-200 border-round cursor-pointer"
                   >
                     <input
+                      id={`role-${role.id}`}
                       type="checkbox"
                       checked={isSelected}
                       onChange={(event) =>
                         handleCheckboxChange(role.id, event.target.checked)
                       }
-                      className="cursor-pointer"
+                      className="cursor-pointer m-0 flex-shrink-0"
                     />
 
                     <div className="flex flex-column">
@@ -158,7 +161,7 @@ export function AssignRoleToUser() {
                         {role.description}
                       </span>
                     </div>
-                  </div>
+                  </label>
                 );
               })}
             </div>

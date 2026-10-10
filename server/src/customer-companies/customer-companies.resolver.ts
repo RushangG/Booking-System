@@ -12,17 +12,18 @@ export class CustomerCompaniesResolver {
 
   @Mutation(() => [CustomerCompany])
   async assignCustomersToCompany(
-    @Args('customerId', { type: () => Int }) customerId: number,
-    @Args('companyIds', { type: () => String }) companyIds: string,
+    @Args('companyId', { type: () => Int }) companyId: number,
+    @Args('customerIds', { type: () => String }) customerIds: string,
+    
   ) {
-    let parsedCompanyIds = companyIds
+    let parseCustomersIds = customerIds
       .split(',')
-      .map((id) => parseInt(id.trim(), 10));
+      .map((id) => parseInt(id.trim(), 10));  
 
     return await this.customerCompaniesService.assignCustomersToCompany(
-      parsedCompanyIds,
-      customerId,
-    );
+      companyId,
+      parseCustomersIds,
+    ); 
   }
 
   @Mutation(() => String)

@@ -70,6 +70,8 @@ export class CustomerService {
     return customer;
   }
 
+ 
+
   async update(id: number, updateCustomerInput: UpdateCustomerInput) {
     let customer = await this.customerRepo.findOneBy({ id });
     if (!customer) {

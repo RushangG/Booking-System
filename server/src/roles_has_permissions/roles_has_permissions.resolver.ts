@@ -13,7 +13,7 @@ export class RolesHasPermissionsResolver {
   @Mutation(() => [RolesHasPermissions])
   async assignPermissionsToRole(
     @Args('roleId', { type: () => Int }) roleId: number,
-    @Args('permissionIds', { type: () => String }) permissionIds: String,
+    @Args('permissionIds', { type: () => String, nullable: true }) permissionIds: String,
   ) {
     const permissionIdsArray = permissionIds
       .split(',')
