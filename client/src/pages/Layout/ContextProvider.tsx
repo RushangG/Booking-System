@@ -4,8 +4,8 @@ import { gql } from "@apollo/client";
 interface user {
   sub: number;
   email: string;
-  roles: [];
-  permissions: [];
+  roles: string[];
+  permissions: string[];
 }
 
 interface AuthContextProps {
@@ -103,7 +103,7 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async () => {
-    await fetchUser();
+  await fetchUser();
   };
 
   const setCompany = (id: number) => {

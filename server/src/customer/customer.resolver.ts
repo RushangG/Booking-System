@@ -27,6 +27,10 @@ export class CustomerResolver {
     return this.customerService.findOne(id);
   }
 
+  @Query(() => [Customer], { name: 'findCustomersNotInCompany' })
+  findCustomersNotInCompany(@Args('companyId', { type: () => Int }) companyId: number) {
+    return this.customerService.findCustomersNotInCompany(companyId);
+  }
   @Mutation(() => Customer)
   updateCustomer(
     @Args('updateCustomerInput') updateCustomerInput: UpdateCustomerInput,

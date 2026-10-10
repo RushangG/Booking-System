@@ -139,7 +139,7 @@ export function Company() {
                             })
                           }
                         >
-                          Company Users
+                          Assign Users
                         </Button>
 
                         <Button

@@ -39,6 +39,6 @@ export class LocationsService {
       throw new NotFoundException(`Location with ID ${id} not found`);
     }
     await this.locationsRepository.delete(id);
-    return location;
+    return `Location with ID ${id} has been deleted successfully.`;
   }
 }

@@ -60,6 +60,7 @@ export function CustomerAddEdit() {
 
         if (response.data) {
           alert("Customer updated successfully!");
+         
           navigate("/customer");
           return;
         }
@@ -76,7 +77,12 @@ export function CustomerAddEdit() {
 
       if (response.data) {
         alert("Customer created successfully!");
+        if(companyId) {
+          navigate("/company");
+        } 
+        else {
         navigate("/customer");
+        }
       }
     } catch (error) {
       console.error("Customer save failed:", error);

@@ -38,22 +38,7 @@ export function Layout() {
                     <Sidebar.GroupLabel>Navigation</Sidebar.GroupLabel>
                     <Sidebar.GroupContent>
                       <Sidebar.Menu>
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/customer")}
-                          >
-                            <Users />
-                            <span>Customer</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/company")}
-                          >
-                            <Users />
-                            <span>Company</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
+                        
                         <Sidebar.MenuItem>
                           <Sidebar.MenuButton
                             onClick={() => navigate("/users")}
@@ -62,6 +47,38 @@ export function Layout() {
                             <span> Users </span>
                           </Sidebar.MenuButton>
                         </Sidebar.MenuItem>
+                        
+                        
+                         <Sidebar.MenuItem>
+                          <Sidebar.MenuButton
+                            onClick={() => navigate("/company")}
+                          >
+                            <Users />
+                            <span>Company</span>
+                          </Sidebar.MenuButton>
+                        </Sidebar.MenuItem>
+
+                        
+                        <Sidebar.MenuItem>
+                          <Sidebar.MenuButton
+                            onClick={() => navigate("/customer")}
+                          >
+                            <Users />
+                            <span>Customer</span>
+                          </Sidebar.MenuButton>
+                        </Sidebar.MenuItem>
+
+
+                        <Sidebar.MenuItem>
+                          <Sidebar.MenuButton
+                            onClick={() => navigate("/location")}
+                          >
+                            <Users />
+                            <span>Location</span>
+                          </Sidebar.MenuButton>
+                        </Sidebar.MenuItem>
+                       
+                        
 
                         <Sidebar.MenuItem>
                           <Sidebar.MenuButton
@@ -71,6 +88,7 @@ export function Layout() {
                             <span>Accommodation</span>
                           </Sidebar.MenuButton>
                         </Sidebar.MenuItem>
+
 
                         <Sidebar.MenuItem>
                           <Sidebar.MenuButton

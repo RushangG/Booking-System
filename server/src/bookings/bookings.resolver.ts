@@ -6,7 +6,7 @@ import { UpdateBookingInput } from './dto/update-booking.input';
 
 @Resolver(() => Booking)
 export class BookingsResolver {
-  constructor(private readonly bookingsService: BookingsService) {}
+  constructor(private readonly bookingsService: BookingsService) { }
 
   @Mutation(() => Booking)
   createBooking(@Args('createBookingInput') createBookingInput: CreateBookingInput) {
@@ -14,8 +14,9 @@ export class BookingsResolver {
   }
 
   @Query(() => [Booking], { name: 'bookings' })
-  findAll() {
-    return this.bookingsService.findAll();
+  findAll(@Args("status", { type: () => Int, nullable: true })
+  status?: number,) {
+    return this.bookingsService.findAll(status);
   }
 
   @Query(() => Booking, { name: 'booking' })

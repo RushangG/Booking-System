@@ -73,7 +73,7 @@ export function BookingAddEdit() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const input = {
@@ -83,6 +83,11 @@ export function BookingAddEdit() {
       check_in: new Date(formData.check_in),
       check_out: new Date(formData.check_out),
     };
+
+    if (input.check_in > input.check_out) {
+      alert("Check-in date cannot be later than check-out date.");
+      return;
+    }
 
     if (booking) {
       const res = await updateBooking({

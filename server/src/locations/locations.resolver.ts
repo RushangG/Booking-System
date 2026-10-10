@@ -28,7 +28,7 @@ export class LocationsResolver {
     return this.locationsService.update(updateLocationInput.id, updateLocationInput);
   }
 
-  @Mutation(() => Location)
+  @Mutation(() => String)
   removeLocation(@Args('id', { type: () => Int }) id: number) {
     return this.locationsService.remove(id);
   }

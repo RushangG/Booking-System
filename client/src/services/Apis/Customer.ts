@@ -58,3 +58,15 @@ export const DELETE_CUSTOMER = gql`
     removeCustomer(id: $id)
   }
 `;
+
+export const FIND_CUSTOMERS_NOT_IN_COMPANY = gql`
+query FindCustomersNotInCompany($companyId: Int!) {
+    findCustomersNotInCompany(companyId: $companyId) {
+        id
+        name
+        email
+        phone
+    }
+}
+
+`;

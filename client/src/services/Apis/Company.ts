@@ -141,7 +141,10 @@ mutation AssignCustomersToCompany($companyId: Int!, $customerIds: String!) {
             industry
         }
     }
-}`;
+}
+
+
+`;
 
 export const REMOVE_CUSTOMER_FROM_COMPANY = gql`
 mutation RemoveCustomerFromCompany($companyId: Int!, $customerId: Int!) {

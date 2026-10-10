@@ -70,6 +70,23 @@ export class CustomerService {
     return customer;
   }
 
+  async findCustomersNotInCompany(companyId: number) {
+      const usersInCompany = await this.customerRepo
+      .createQueryBuilder('customer')
+      .leftJoin('customer.customerCompanies', 'customerCompany')
+      .where('customerCompany.companyId = :companyId', { companyId })
+      .getMany();
+
+    const usersInCompanyIds = usersInCompany.map((customer) => customer.id);
+
+    const customersNotInCompany = await this.customerRepo
+      .createQueryBuilder('customer')
+      .where('customer.id NOT IN (:...ids)', { ids: usersInCompanyIds.length > 0 ? usersInCompanyIds : [0] })
+      .getMany();
+
+    return customersNotInCompany;
+            
+    }
  
 
   async update(id: number, updateCustomerInput: UpdateCustomerInput) {

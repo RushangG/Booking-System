@@ -13,7 +13,7 @@ export class BookingsService {
   constructor(
     @InjectRepository(BookingsRepository)
     private readonly bookingRepo: BookingsRepository,
-  ) {}
+  ) { }
 
   async create(createBookingInput: CreateBookingInput) {
     const booking = new Booking();
@@ -26,15 +26,22 @@ export class BookingsService {
     return this.bookingRepo.save(booking);
   }
 
-  async findAll() {
-    return this.bookingRepo.find({
-      relations: {
-        customer: true,
-        accommodation: true,
-        status: true,
-      },
-    });
+  async findAll(status?: number) {
+    let query = this.bookingRepo.createQueryBuilder('booking');
+
+    query.leftJoinAndSelect('booking.customer', 'customer');
+    query.leftJoinAndSelect('booking.accommodation', 'accommodation');
+    query.leftJoinAndSelect('booking.status', 'status');
+
+    if (status !== null && status !== undefined) {
+      query.where('status.id = :status', { status });
+    }
+
+    const bookings = await query.getMany();
+    return bookings;
+
   }
+
 
   async findOne(id: number) {
     const booking = await this.bookingRepo.findOne({

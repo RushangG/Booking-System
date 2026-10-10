@@ -36,7 +36,8 @@ export function CompanySelectList() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  console.log("Company data:", data);
+  let isAdmin = user?.roles?.includes("Admin") ?? false;
+
 
   const companies = data.user.companiesHasUsers
     .map((c: IuserCompany) => c.company)
@@ -123,9 +124,14 @@ export function CompanySelectList() {
                             text
                             onClick={() => {
                               setCompany(item.id);
-                              navigate("/customer", {
-                                state: { companyId: item.id },
-                              });
+
+                              if (isAdmin) {
+                                navigate("/users");
+                              } else {
+                                navigate("/customer", {
+                                  state: { companyId: item.id },
+                                });
+                              }
                             }}
                           >
                             select

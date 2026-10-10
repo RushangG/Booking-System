@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const ALL_BOOKINGS = gql`
-  query Bookings {
-    bookings {
+  query Bookings($status: Int) {
+    bookings(status: $status) {
       id
       check_in
       check_out

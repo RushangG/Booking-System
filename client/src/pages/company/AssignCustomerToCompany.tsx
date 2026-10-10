@@ -11,7 +11,7 @@ import {
   REMOVE_CUSTOMER_FROM_COMPANY,
 } from "../../services/Apis/Company";
 
-import { CUSTOMERS_NOT_IN_COMPANY } from "../../services/Apis/Customer";
+import { FIND_CUSTOMERS_NOT_IN_COMPANY } from "../../services/Apis/Customer";
 
 interface Customer {
   id: number;
@@ -24,15 +24,19 @@ interface CompanyCustomersData {
   company: {
     id: number;
     name: string;
-    companiesHasCustomers: {
-      customer: Customer;
+    customerCompanies: {
+      id: number;
+      Customer: Customer;
     }[];
   };
 }
+  
+
 
 interface CustomersNotInCompanyData {
-  customersNotInCompany: Customer[];
+  findCustomersNotInCompany: Customer[];
 }
+
 
 export function AssignCustomerToCompany() {
   const location = useLocation();
@@ -44,30 +48,37 @@ export function AssignCustomerToCompany() {
 
   const {
     data: companyCustomersData,
-    loading: companyCustomersLoading,
     error: companyCustomersError,
     refetch: refetchCompanyCustomers,
-  } = useQuery<CompanyCustomersData>(GET_COMPANY_CUSTOMERS, {
+  } = useQuery(GET_COMPANY_CUSTOMERS, {
     variables: { id: Number(companyId) },
     skip: !companyId,
     fetchPolicy: "network-only",
-  });
+  }) as {
+    data: CompanyCustomersData;
+    error: any;
+    refetch: () => void;
+  };
+
 
   const {
     data: availableCustomersData,
-    loading: availableCustomersLoading,
     error: availableCustomersError,
     refetch: refetchAvailableCustomers,
-  } = useQuery<CustomersNotInCompanyData>(CUSTOMERS_NOT_IN_COMPANY, {
+  } = useQuery(FIND_CUSTOMERS_NOT_IN_COMPANY, {
     variables: { companyId: Number(companyId) },
     skip: !companyId,
     fetchPolicy: "network-only",
-  });
+  }) as {
+    data: CustomersNotInCompanyData;
+    error: any;
+    refetch: () => void;
+  };
 
   const [assignCustomersToCompany, { loading: assigning }] = useMutation(
     ASSIGN_CUSTOMERS_TO_COMPANY,
   );
-
+ 
   const [removeCustomerFromCompany] = useMutation(
     REMOVE_CUSTOMER_FROM_COMPANY,
   );
@@ -77,12 +88,15 @@ export function AssignCustomerToCompany() {
   }
 
   const customers =
-    companyCustomersData?.company?.companiesHasCustomers.map(
-      (item) => item.customer,
-    ) ?? [];
+  companyCustomersData?.company?.customerCompanies?.map(
+    (customerCompany) => customerCompany.Customer
+  ) ?? [];
+   
 
-  const availableCustomers =
-    availableCustomersData?.customersNotInCompany ?? [];
+ 
+const availableCustomers =
+  availableCustomersData?.findCustomersNotInCompany ?? [];
+
 
   const handleCheckboxChange = (
     customerId: number,
@@ -112,10 +126,12 @@ export function AssignCustomerToCompany() {
         ...new Set([...currentCustomerIds, ...selected]),
       ];
 
+      const customerIdsString = allCustomerIds.join(",");
+
       await assignCustomersToCompany({
         variables: {
           companyId: Number(companyId),
-          customerId: allCustomerIds.join(","),
+          customerIds: customerIdsString,
         },
       });
 
@@ -129,6 +145,8 @@ export function AssignCustomerToCompany() {
     } catch (error) {
       console.error("Failed to assign customers:", error);
       setErrorMessage("Failed to assign customers. Please try again.");
+      
+      
     }
   };
 
@@ -164,9 +182,7 @@ export function AssignCustomerToCompany() {
     }
   };
 
-  if (companyCustomersLoading || availableCustomersLoading) {
-    return <div className="p-4">Loading customers...</div>;
-  }
+
 
   if (companyCustomersError || availableCustomersError) {
     return (
@@ -199,10 +215,10 @@ export function AssignCustomerToCompany() {
         <p className="text-red-500 text-sm">{errorMessage}</p>
       )}
 
-      {/* Assigned customers */}
+      
       <div className="surface-card border-round shadow-2 p-3">
         <div className="flex justify-content-between align-items-center mb-3">
-          <h3 className="m-0">Company Customers</h3>
+          <h3 className="m-0">{companyCustomersData?.company?.name}  Customers</h3>
           <span className="text-color-secondary">
             {customers.length} customers
           </span>
@@ -230,9 +246,7 @@ export function AssignCustomerToCompany() {
                       <DataTable.THeadTitle>Email</DataTable.THeadTitle>
                     </DataTable.THeadCell>
 
-                    <DataTable.THeadCell>
-                      <DataTable.THeadTitle>Created At</DataTable.THeadTitle>
-                    </DataTable.THeadCell>
+                  
 
                     <DataTable.THeadCell>
                       <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
@@ -249,11 +263,7 @@ export function AssignCustomerToCompany() {
                       <DataTable.Cell>{index + 1}</DataTable.Cell>
                       <DataTable.Cell>{item.name}</DataTable.Cell>
                       <DataTable.Cell>{item.email}</DataTable.Cell>
-                      <DataTable.Cell>
-                        {item.createdAt
-                          ? new Date(item.createdAt).toLocaleDateString()
-                          : "-"}
-                      </DataTable.Cell>
+                      
                       <DataTable.Cell>
                         <Button
                           severity="danger"

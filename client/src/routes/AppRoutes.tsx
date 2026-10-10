@@ -23,6 +23,8 @@ import { AssignRoleToUser } from "../pages/roles/AssignRoleToUser";
 import { AssignCustomerToCompany } from "../pages/company/AssignCustomerToCompany";
 import { Roles } from "../pages/roles/Roles";
 import { PermissionAssignToRole } from "../pages/roles/PermissionAssignToRole";
+import { LocationAddEdit } from "../pages/location/LocationAddEdit";
+import { Location } from "../pages/location/Location";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -76,6 +78,15 @@ export const router = createBrowserRouter([
             path: "/accommodation-add-edit",
             element: <AccommodationAddEdit />,
           },
+          {
+            path: "/location",
+            element: <Location />,
+          },
+          {
+            path: "/location-add-edit",
+            element: <LocationAddEdit />,
+          },
+          
           {
             path: "/company-add-edit",
             element: <CompanyAddEdit />,
