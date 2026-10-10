@@ -14,6 +14,7 @@ import { RolesHasPermissions } from './roles_has_permissions/entities/roles_has_
 import { CustomerCompany } from './customer-companies/entities/customer-company.entity';
 import { AuthSession } from './auth/entities/auth-session.entity';
 import { CompaniesHasUsers } from './companies-has-users/entities/companies-has-users.entity';
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: 'localhost',
@@ -21,23 +22,10 @@ export const AppDataSource = new DataSource({
   username: 'postgres',
   password: 'postgres',
   database: 'bookingSystemDB',
-  synchronize: true,
-  logging: false,
-  entities: [
-    Customer,
-    Company,
-    User,
-    Role,
-    Permission,
-    AccommodationType,
-    Location,
-    Accommodation,
-    BookingStatus,
-    Booking,
-    UsersHasRoles,
-    RolesHasPermissions,
-    CustomerCompany,
-    AuthSession,
-    CompaniesHasUsers,
-  ],
+
+  synchronize: false,
+  logging: true,
+
+  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  migrations: [__dirname + '/migrations/*{.ts,.js}'],
 });
