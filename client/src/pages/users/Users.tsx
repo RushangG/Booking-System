@@ -2,9 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@primereact/ui/button";
 import { DataTable } from "@primereact/ui/datatable";
 import { useQuery, useMutation } from "@apollo/client/react";
-
 import { USER_ALL, DELETE_USER } from "../../services/Apis/Users";
-
+import { Guard } from "../Layout/Guard";
 type User = {
   id: number;
   createdAt: string;
@@ -53,114 +52,135 @@ export function Users() {
   }
 
   return (
-    <div className="p-4">
-      <div className="flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="text-2xl font-bold m-0">Users</h2>
+    <Guard
+      requiredPermission={["users:view"]}
+      fallback={<p>You do not have permission to view this page.</p>}
+    >
+      <div className="p-4">
+        <div className="flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 className="text-2xl font-bold m-0">Users</h2>
 
-          <p className="text-color-secondary mt-2 mb-0">Manage users</p>
+            <p className="text-color-secondary mt-2 mb-0">Manage users</p>
+          </div>
+
+          <Guard requiredPermission={["users:create"]}>
+            <Button label="Add User" onClick={() => navigate("/user-add-edit")}>
+              Add
+            </Button>
+          </Guard>
         </div>
 
-        <Button label="Add User" onClick={() => navigate("/user-add-edit")}>
-          Add
-        </Button>
+        <div className="surface-card border-round shadow-2 p-3">
+          <DataTable.Root data={users}>
+            <DataTable.TableContainer>
+              <DataTable.Table>
+                <DataTable.THead>
+                  <DataTable.THeadRow>
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>No.</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
+
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>Name</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
+
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>Email</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
+
+                    <DataTable.THeadCell>
+                      <DataTable.THeadTitle>Created At</DataTable.THeadTitle>
+                    </DataTable.THeadCell>
+
+                    <Guard
+                      requiredPermission={[
+                        "users:update",
+                        "users:delete",
+                        "admin:assign-role",
+                      ]}
+                    >
+                      <DataTable.THeadCell>
+                        <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
+                      </DataTable.THeadCell>
+                    </Guard>
+                  </DataTable.THeadRow>
+                </DataTable.THead>
+
+                <DataTable.TBody>
+                  {({ item, index }: { item: User; index: number }) => (
+                    <DataTable.Row key={item.id}>
+                      <DataTable.Cell>{index + 1}</DataTable.Cell>
+
+                      <DataTable.Cell>
+                        <span className="font-medium">{item.name}</span>
+                      </DataTable.Cell>
+
+                      <DataTable.Cell>{item.email}</DataTable.Cell>
+
+                      <DataTable.Cell>
+                        {new Date(item.createdAt).toLocaleDateString()}
+                      </DataTable.Cell>
+
+                      <DataTable.Cell>
+                        <div className="flex gap-2">
+                          <Guard requiredPermission={["users:update"]}>
+                            <Button
+                              severity="info"
+                              size="small"
+                              rounded
+                              text
+                              onClick={() =>
+                                navigate("/user-add-edit", {
+                                  state: {
+                                    user: item,
+                                  },
+                                })
+                              }
+                            >
+                              Edit
+                            </Button>
+                          </Guard>
+
+                          <Guard requiredPermission={["users:delete"]}>
+                            <Button
+                              severity="danger"
+                              size="small"
+                              rounded
+                              text
+                              onClick={() => handleDeleteUser(item.id)}
+                            >
+                              Delete
+                            </Button>
+                          </Guard>
+
+                          <Guard requiredPermission={["admin:assign-role"]}>
+                            <Button
+                              severity="success"
+                              size="small"
+                              rounded
+                              text
+                              onClick={() =>
+                                navigate("/assign-role-to-user", {
+                                  state: {
+                                    userId: item.id,
+                                  },
+                                })
+                              }
+                            >
+                              Assign Role
+                            </Button>
+                          </Guard>
+                        </div>
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  )}
+                </DataTable.TBody>
+              </DataTable.Table>
+            </DataTable.TableContainer>
+          </DataTable.Root>
+        </div>
       </div>
-
-      <div className="surface-card border-round shadow-2 p-3">
-        <DataTable.Root data={users}>
-          <DataTable.TableContainer>
-            <DataTable.Table>
-              <DataTable.THead>
-                <DataTable.THeadRow>
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>No.</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
-
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>Name</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
-
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>Email</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
-
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>Created At</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
-
-                  <DataTable.THeadCell>
-                    <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
-                  </DataTable.THeadCell>
-                </DataTable.THeadRow>
-              </DataTable.THead>
-
-              <DataTable.TBody>
-                {({ item, index }: { item: User; index: number }) => (
-                  <DataTable.Row key={item.id}>
-                    <DataTable.Cell>{index + 1}</DataTable.Cell>
-
-                    <DataTable.Cell>
-                      <span className="font-medium">{item.name}</span>
-                    </DataTable.Cell>
-
-                    <DataTable.Cell>{item.email}</DataTable.Cell>
-
-                    <DataTable.Cell>
-                      {new Date(item.createdAt).toLocaleDateString()}
-                    </DataTable.Cell>
-
-                    <DataTable.Cell>
-                      <div className="flex gap-2">
-                        <Button
-                          severity="info"
-                          size="small"
-                          rounded
-                          text
-                          onClick={() =>
-                            navigate("/user-add-edit", {
-                              state: {
-                                user: item,
-                              },
-                            })
-                          }
-                        >
-                          Edit
-                        </Button>
-
-                        <Button
-                          severity="danger"
-                          size="small"
-                          rounded
-                          text
-                          onClick={() => handleDeleteUser(item.id)}
-                        >
-                          Delete
-                        </Button>
-
-                        <Button
-                          severity="success"
-                          size="small"
-                          rounded
-                          text
-                          onClick={() =>
-                            navigate("/assign-role-to-user", {
-                              state: {
-                                userId: item.id,
-                              },
-                            })
-                          }
-                        >
-                          Assign Role
-                        </Button>
-                      </div>
-                    </DataTable.Cell>
-                  </DataTable.Row>
-                )}
-              </DataTable.TBody>
-            </DataTable.Table>
-          </DataTable.TableContainer>
-        </DataTable.Root>
-      </div>
-    </div>
+    </Guard>
   );
 }

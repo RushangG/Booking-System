@@ -49,6 +49,9 @@ export function Customer() {
   }
 
   return (
+    <Guard requiredPermission={["customer:view"]}
+      fallback={<p>You do not have permission to view this page.</p>}
+    >
     <div className="p-4">
       <div className="flex justify-content-between align-items-center mb-4">
         <div>
@@ -57,7 +60,7 @@ export function Customer() {
           <p className="text-color-secondary mt-2 mb-0">Manage customers</p>
         </div>
 
-        <Guard requiredPermission="customers:view">
+        <Guard requiredPermission={["customer:create"]}>
           <Button
             label="Add Customer"
             onClick={() => navigate("/customer-add-edit")}
@@ -89,9 +92,11 @@ export function Customer() {
                     <DataTable.THeadTitle>Phone</DataTable.THeadTitle>
                   </DataTable.THeadCell>
 
+                  <Guard requiredPermission={["customer:update", "customer:delete"]}>
                   <DataTable.THeadCell>
                     <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
                   </DataTable.THeadCell>
+                  </Guard>
                 </DataTable.THeadRow>
               </DataTable.THead>
 
@@ -110,6 +115,8 @@ export function Customer() {
 
                     <DataTable.Cell>
                       <div className="flex gap-2">
+
+                        <Guard requiredPermission={["customer:update"]}>
                         <Button
                           severity="info"
                           size="small"
@@ -123,7 +130,9 @@ export function Customer() {
                         >
                           Edit
                         </Button>
+                        </Guard>
 
+                        <Guard requiredPermission={["customer:delete"]}>  
                         <Button
                           severity="danger"
                           size="small"
@@ -133,6 +142,8 @@ export function Customer() {
                         >
                           Delete
                         </Button>
+                        </Guard> 
+
                       </div>
                     </DataTable.Cell>
                   </DataTable.Row>
@@ -143,5 +154,6 @@ export function Customer() {
         </DataTable.Root>
       </div>
     </div>
+    </Guard>
   );
 }

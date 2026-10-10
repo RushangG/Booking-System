@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { useMutation } from "@apollo/client/react";
 
 import { CREATE_USER, UPDATE_USER } from "../../services/Apis/Users";
+import { Guard } from "../Layout/Guard";
 
 export function UsersAddEdit() {
   const navigate = useNavigate();
@@ -86,81 +87,86 @@ export function UsersAddEdit() {
   };
 
   return (
-    <div className="flex justify-content-center align-items-center min-h-screen surface-ground p-3">
-      <div className="surface-card border-round shadow-2 p-5 w-full md:w-6 lg:w-4">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold m-0">
-            {user ? "Update User" : "Create User"}
-          </h2>
+    <Guard
+      requiredPermission={["users:create", "users:update"]}
+      fallback={<p>You do not have permission to access this page.</p>}
+    >
+      <div className="flex justify-content-center align-items-center min-h-screen surface-ground p-3">
+        <div className="surface-card border-round shadow-2 p-5 w-full md:w-6 lg:w-4">
+          <div className="text-center mb-4">
+            <h2 className="text-2xl font-bold m-0">
+              {user ? "Update User" : "Create User"}
+            </h2>
 
-          <p className="text-color-secondary mt-2">
-            {user
-              ? "Update user details"
-              : "Fill in the details to create a new user"}
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="name" className="block font-medium mb-2">
-              Name
-            </label>
-
-            <InputText
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter user name"
-              className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
-              required
-            />
+            <p className="text-color-secondary mt-2">
+              {user
+                ? "Update user details"
+                : "Fill in the details to create a new user"}
+            </p>
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="email" className="block font-medium mb-2">
-              Email
-            </label>
-
-            <InputText
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter user email"
-              className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
-              required
-            />
-          </div>
-
-          {!user && (
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="password" className="block font-medium mb-2">
-                Password
+              <label htmlFor="name" className="block font-medium mb-2">
+                Name
               </label>
 
               <InputText
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                placeholder={user ? "Enter new password" : "Enter password"}
+                placeholder="Enter user name"
                 className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
-                required={!user}
+                required
               />
             </div>
-          )}
 
-          <Button
-            type="submit"
-            className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
-          >
-            {user ? "Update" : "Create"}
-          </Button>
-        </form>
+            <div className="mb-4">
+              <label htmlFor="email" className="block font-medium mb-2">
+                Email
+              </label>
+
+              <InputText
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter user email"
+                className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
+                required
+              />
+            </div>
+
+            {!user && (
+              <div className="mb-4">
+                <label htmlFor="password" className="block font-medium mb-2">
+                  Password
+                </label>
+
+                <InputText
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder={user ? "Enter new password" : "Enter password"}
+                  className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
+                  required={!user}
+                />
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full h-2rem border-1 border-color-gray-300 border-round p-2"
+            >
+              {user ? "Update" : "Create"}
+            </Button>
+          </form>
+        </div>
       </div>
-    </div>
+    </Guard>
   );
 }

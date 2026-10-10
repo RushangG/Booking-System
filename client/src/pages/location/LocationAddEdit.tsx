@@ -9,6 +9,7 @@ import {
   UPDATE_LOCATION,
   AllLocations,
 } from "../../services/Apis/Locations";
+import { Guard } from "../Layout/Guard";
 
 type LocationItem = {
   id: number;
@@ -124,6 +125,7 @@ export function LocationAddEdit() {
   }
 
   return (
+    <Guard requiredPermission={["location:create", "location:update"]}>
     <div className="flex justify-content-center align-items-center min-h-screen surface-ground p-3">
       <div className="surface-card border-round shadow-2 p-5 w-full md:w-6 lg:w-4">
         <div className="text-center mb-4">
@@ -233,5 +235,6 @@ export function LocationAddEdit() {
         </form>
       </div>
     </div>
+    </Guard>
   );
 }

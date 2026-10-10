@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useQuery, useMutation } from "@apollo/client/react";
@@ -12,6 +11,7 @@ import {
 } from "../../services/Apis/Company";
 
 import { FIND_CUSTOMERS_NOT_IN_COMPANY } from "../../services/Apis/Customer";
+import { Guard } from "../Layout/Guard";
 
 interface Customer {
   id: number;
@@ -30,13 +30,10 @@ interface CompanyCustomersData {
     }[];
   };
 }
-  
-
 
 interface CustomersNotInCompanyData {
   findCustomersNotInCompany: Customer[];
 }
-
 
 export function AssignCustomerToCompany() {
   const location = useLocation();
@@ -60,7 +57,6 @@ export function AssignCustomerToCompany() {
     refetch: () => void;
   };
 
-
   const {
     data: availableCustomersData,
     error: availableCustomersError,
@@ -78,30 +74,22 @@ export function AssignCustomerToCompany() {
   const [assignCustomersToCompany, { loading: assigning }] = useMutation(
     ASSIGN_CUSTOMERS_TO_COMPANY,
   );
- 
-  const [removeCustomerFromCompany] = useMutation(
-    REMOVE_CUSTOMER_FROM_COMPANY,
-  );
+
+  const [removeCustomerFromCompany] = useMutation(REMOVE_CUSTOMER_FROM_COMPANY);
 
   if (!companyId) {
     return <p className="p-4 text-red-500">Company ID not found.</p>;
   }
 
   const customers =
-  companyCustomersData?.company?.customerCompanies?.map(
-    (customerCompany) => customerCompany.Customer
-  ) ?? [];
-   
+    companyCustomersData?.company?.customerCompanies?.map(
+      (customerCompany) => customerCompany.Customer,
+    ) ?? [];
 
- 
-const availableCustomers =
-  availableCustomersData?.findCustomersNotInCompany ?? [];
+  const availableCustomers =
+    availableCustomersData?.findCustomersNotInCompany ?? [];
 
-
-  const handleCheckboxChange = (
-    customerId: number,
-    checked: boolean,
-  ) => {
+  const handleCheckboxChange = (customerId: number, checked: boolean) => {
     setSelected((previous) =>
       checked
         ? previous.includes(customerId)
@@ -118,13 +106,9 @@ const availableCustomers =
     setErrorMessage(null);
 
     try {
-      const currentCustomerIds = customers.map(
-        (customer) => customer.id,
-      );
+      const currentCustomerIds = customers.map((customer) => customer.id);
 
-      const allCustomerIds = [
-        ...new Set([...currentCustomerIds, ...selected]),
-      ];
+      const allCustomerIds = [...new Set([...currentCustomerIds, ...selected])];
 
       const customerIdsString = allCustomerIds.join(",");
 
@@ -145,8 +129,6 @@ const availableCustomers =
     } catch (error) {
       console.error("Failed to assign customers:", error);
       setErrorMessage("Failed to assign customers. Please try again.");
-      
-      
     }
   };
 
@@ -182,169 +164,165 @@ const availableCustomers =
     }
   };
 
-
-
   if (companyCustomersError || availableCustomersError) {
     return (
-      <div className="p-4 text-red-500">
-        {companyCustomersError?.message ??
-          availableCustomersError?.message}
-      </div>
+      <Guard
+        requiredPermission={["company:assign-customers"]}
+        fallback={<p>You do not have permission to access this page.</p>}
+      >
+        <div className="p-4 text-red-500">
+          {companyCustomersError?.message ?? availableCustomersError?.message}
+        </div>
+      </Guard>
     );
   }
 
   return (
-    <div className="p-4">
-      {/* Page header */}
-      <div className="mb-4">
-        <h2 className="text-2xl font-bold m-0">
-          Manage Customers for Company:{" "}
-          {companyCustomersData?.company?.name}
-        </h2>
+    <Guard
+      requiredPermission={["company:assign-customers"]}
+      fallback={<p>You do not have permission to access this page.</p>}
+    >
+      <div className="p-4">
+        <div className="mb-4">
+          <h2 className="text-2xl font-bold m-0">
+            Manage Customers for Company: {companyCustomersData?.company?.name}
+          </h2>
 
-        <p className="text-color-secondary mt-2 mb-0">
-          Assign and manage customers associated with this company.
-        </p>
-      </div>
-
-      {successMessage && (
-        <p className="text-green-500 text-sm">{successMessage}</p>
-      )}
-
-      {errorMessage && (
-        <p className="text-red-500 text-sm">{errorMessage}</p>
-      )}
-
-      
-      <div className="surface-card border-round shadow-2 p-3">
-        <div className="flex justify-content-between align-items-center mb-3">
-          <h3 className="m-0">{companyCustomersData?.company?.name}  Customers</h3>
-          <span className="text-color-secondary">
-            {customers.length} customers
-          </span>
+          <p className="text-color-secondary mt-2 mb-0">
+            Assign and manage customers associated with this company.
+          </p>
         </div>
 
-        {customers.length === 0 ? (
-          <p className="text-color-secondary">
-            No customers assigned to this company.
-          </p>
-        ) : (
-          <DataTable.Root data={customers}>
-            <DataTable.TableContainer>
-              <DataTable.Table>
-                <DataTable.THead>
-                  <DataTable.THeadRow>
-                    <DataTable.THeadCell>
-                      <DataTable.THeadTitle>No.</DataTable.THeadTitle>
-                    </DataTable.THeadCell>
-
-                    <DataTable.THeadCell>
-                      <DataTable.THeadTitle>Name</DataTable.THeadTitle>
-                    </DataTable.THeadCell>
-
-                    <DataTable.THeadCell>
-                      <DataTable.THeadTitle>Email</DataTable.THeadTitle>
-                    </DataTable.THeadCell>
-
-                  
-
-                    <DataTable.THeadCell>
-                      <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
-                    </DataTable.THeadCell>
-                  </DataTable.THeadRow>
-                </DataTable.THead>
-
-                <DataTable.TBody>
-                  {({ item, index }: {
-                    item: Customer;
-                    index: number;
-                  }) => (
-                    <DataTable.Row key={item.id}>
-                      <DataTable.Cell>{index + 1}</DataTable.Cell>
-                      <DataTable.Cell>{item.name}</DataTable.Cell>
-                      <DataTable.Cell>{item.email}</DataTable.Cell>
-                      
-                      <DataTable.Cell>
-                        <Button
-                          severity="danger"
-                          size="small"
-                          onClick={() => handleRemoveCustomer(item.id)}
-                        >
-                          Remove
-                        </Button>
-                      </DataTable.Cell>
-                    </DataTable.Row>
-                  )}
-                </DataTable.TBody>
-              </DataTable.Table>
-            </DataTable.TableContainer>
-          </DataTable.Root>
+        {successMessage && (
+          <p className="text-green-500 text-sm">{successMessage}</p>
         )}
-      </div>
 
-      {/* Available customers */}
-      <div className="surface-card border-round shadow-2 p-3 mt-4">
-        <div className="flex justify-content-between align-items-center mb-3">
-          <div>
-            <h3 className="m-0">Add Customers to Company</h3>
-            <p className="text-color-secondary text-sm mt-2 mb-0">
-              Select customers you want to assign to this company.
+        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+
+        <div className="surface-card border-round shadow-2 p-3">
+          <div className="flex justify-content-between align-items-center mb-3">
+            <h3 className="m-0">
+              {companyCustomersData?.company?.name} Customers
+            </h3>
+            <span className="text-color-secondary">
+              {customers.length} customers
+            </span>
+          </div>
+
+          {customers.length === 0 ? (
+            <p className="text-color-secondary">
+              No customers assigned to this company.
             </p>
-          </div>
+          ) : (
+            <DataTable.Root data={customers}>
+              <DataTable.TableContainer>
+                <DataTable.Table>
+                  <DataTable.THead>
+                    <DataTable.THeadRow>
+                      <DataTable.THeadCell>
+                        <DataTable.THeadTitle>No.</DataTable.THeadTitle>
+                      </DataTable.THeadCell>
 
-          <span className="text-color-secondary">
-            {selected.length} selected
-          </span>
+                      <DataTable.THeadCell>
+                        <DataTable.THeadTitle>Name</DataTable.THeadTitle>
+                      </DataTable.THeadCell>
+
+                      <DataTable.THeadCell>
+                        <DataTable.THeadTitle>Email</DataTable.THeadTitle>
+                      </DataTable.THeadCell>
+
+                      <DataTable.THeadCell>
+                        <DataTable.THeadTitle>Actions</DataTable.THeadTitle>
+                      </DataTable.THeadCell>
+                    </DataTable.THeadRow>
+                  </DataTable.THead>
+
+                  <DataTable.TBody>
+                    {({ item, index }: { item: Customer; index: number }) => (
+                      <DataTable.Row key={item.id}>
+                        <DataTable.Cell>{index + 1}</DataTable.Cell>
+                        <DataTable.Cell>{item.name}</DataTable.Cell>
+                        <DataTable.Cell>{item.email}</DataTable.Cell>
+
+                        <DataTable.Cell>
+                          <Button
+                            severity="danger"
+                            size="small"
+                            onClick={() => handleRemoveCustomer(item.id)}
+                          >
+                            Remove
+                          </Button>
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    )}
+                  </DataTable.TBody>
+                </DataTable.Table>
+              </DataTable.TableContainer>
+            </DataTable.Root>
+          )}
         </div>
 
-        {availableCustomers.length === 0 ? (
-          <p className="text-color-secondary">
-            No customers available to assign.
-          </p>
-        ) : (
-          <div
-            className="flex flex-column gap-2 overflow-y-auto"
-            style={{ maxHeight: "350px" }}
-          >
-            {availableCustomers.map((customer) => (
-              <label
-                key={customer.id}
-                htmlFor={`customer-${customer.id}`}
-                className="flex align-items-center gap-3 px-3 py-2 border-1 border-200 border-round cursor-pointer"
-              >
-                <input
-                  id={`customer-${customer.id}`}
-                  type="checkbox"
-                  checked={selected.includes(customer.id)}
-                  onChange={(event) =>
-                    handleCheckboxChange(
-                      customer.id,
-                      event.target.checked,
-                    )
-                  }
-                  className="cursor-pointer m-0 flex-shrink-0"
-                />
+        {/* Available customers */}
+        <div className="surface-card border-round shadow-2 p-3 mt-4">
+          <div className="flex justify-content-between align-items-center mb-3">
+            <div>
+              <h3 className="m-0">Add Customers to Company</h3>
+              <p className="text-color-secondary text-sm mt-2 mb-0">
+                Select customers you want to assign to this company.
+              </p>
+            </div>
 
-                <span className="text-sm">{customer.name}</span>
-                <span className="text-color-secondary text-sm">
-                  {customer.email}
-                </span>
-              </label>
-            ))}
+            <span className="text-color-secondary">
+              {selected.length} selected
+            </span>
           </div>
-        )}
 
-        {availableCustomers.length > 0 && (
-          <div className="flex justify-content-end mt-3">
-            <Button
-              disabled={selected.length === 0 || assigning}
-              onClick={handleAssignCustomers}
+          {availableCustomers.length === 0 ? (
+            <p className="text-color-secondary">
+              No customers available to assign.
+            </p>
+          ) : (
+            <div
+              className="flex flex-column gap-2 overflow-y-auto"
+              style={{ maxHeight: "350px" }}
             >
-              {assigning ? "Assigning..." : "Assign Customers"}
-            </Button>
-          </div>
-        )}
+              {availableCustomers.map((customer) => (
+                <label
+                  key={customer.id}
+                  htmlFor={`customer-${customer.id}`}
+                  className="flex align-items-center gap-3 px-3 py-2 border-1 border-200 border-round cursor-pointer"
+                >
+                  <input
+                    id={`customer-${customer.id}`}
+                    type="checkbox"
+                    checked={selected.includes(customer.id)}
+                    onChange={(event) =>
+                      handleCheckboxChange(customer.id, event.target.checked)
+                    }
+                    className="cursor-pointer m-0 flex-shrink-0"
+                  />
+
+                  <span className="text-sm">{customer.name}</span>
+                  <span className="text-color-secondary text-sm">
+                    {customer.email}
+                  </span>
+                </label>
+              ))}
+            </div>
+          )}
+
+          {availableCustomers.length > 0 && (
+            <div className="flex justify-content-end mt-3">
+              <Button
+                disabled={selected.length === 0 || assigning}
+                onClick={handleAssignCustomers}
+              >
+                {assigning ? "Assigning..." : "Assign Customers"}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Guard>
   );
 }

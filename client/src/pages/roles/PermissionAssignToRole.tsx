@@ -8,7 +8,7 @@ import {
   PERMISSION_BY_ROLE_ID,
   ASSIGN_PERMISSIONS_TO_ROLE,
 } from "../../services/Apis/Permissions";
-
+import { Guard } from "../Layout/Guard.tsx";
 interface Permission {
   id: number;
   permission_type: string;
@@ -52,7 +52,7 @@ export function PermissionAssignToRole() {
     data: rolePermissionsData,
     loading: rolePermissionsLoading,
     error: rolePermissionsError,
-  } = useQuery(PERMISSION_BY_ROLE_ID, { 
+  } = useQuery(PERMISSION_BY_ROLE_ID, {
     variables: { id: Number(roleId) },
     skip: !roleId,
   }) as {
@@ -69,19 +69,15 @@ export function PermissionAssignToRole() {
 
   useEffect(() => {
     if (rolePermissionsData?.role) {
-      const assignedIds =
-        rolePermissionsData.role.rolesHasPermissions.map(
-          (item) => item.Permission.id,
-        );
+      const assignedIds = rolePermissionsData.role.rolesHasPermissions.map(
+        (item) => item.Permission.id,
+      );
 
       setSelected(assignedIds);
     }
   }, [rolePermissionsData]);
 
-  const handleCheckboxChange = (
-    permissionId: number,
-    checked: boolean,
-  ) => {
+  const handleCheckboxChange = (permissionId: number, checked: boolean) => {
     setSelected((previous) => {
       if (checked) {
         return previous.includes(permissionId)
@@ -100,7 +96,7 @@ export function PermissionAssignToRole() {
       return;
     }
 
-    if(selected.length === 0) {
+    if (selected.length === 0) {
       setSuccessMessage(null);
       setErrorMessage("Please select at least one permission to assign.");
       return;
@@ -162,81 +158,69 @@ export function PermissionAssignToRole() {
   const roleName = rolePermissionsData?.role?.name ?? `Role #${roleId}`;
 
   return (
-    <div className="p-4">
-      <div className="surface-card border-round shadow-2 p-3 mt-4">
-      
-        <div className="flex justify-content-between align-items-center mb-3">
-          <div>
-            <h3 className="m-0">Assign Permissions to Role</h3>
+    <Guard requiredPermission={["admin:role-assign-permission"]}>
+      <div className="p-4">
+        <div className="surface-card border-round shadow-2 p-3 mt-4">
+          <div className="flex justify-content-between align-items-center mb-3">
+            <div>
+              <h3 className="m-0">Assign Permissions to Role</h3>
 
-            <p className="text-color-secondary text-sm mt-2 mb-0">
-              Select permissions for <strong>{roleName}</strong>.
+              <p className="text-color-secondary text-sm mt-2 mb-0">
+                Select permissions for <strong>{roleName}</strong>.
+              </p>
+            </div>
+
+            <span className="text-color-secondary text-sm white-space-nowrap">
+              {selected.length} selected
+            </span>
+          </div>
+
+          {successMessage && (
+            <div className="text-green-500 text-sm mb-3">{successMessage}</div>
+          )}
+
+          {errorMessage && (
+            <div className="text-red-500 text-sm mb-3">{errorMessage}</div>
+          )}
+
+          {permissions.length === 0 ? (
+            <p className="text-color-secondary text-sm">
+              No permissions available to assign.
             </p>
-          </div>
-
-          <span className="text-color-secondary text-sm white-space-nowrap">
-            {selected.length} selected
-          </span>
-        </div>
-
-       
-        {successMessage && (
-          <div className="text-green-500 text-sm mb-3">
-            {successMessage}
-          </div>
-        )}
-
-        {errorMessage && (
-          <div className="text-red-500 text-sm mb-3">
-            {errorMessage}
-          </div>
-        )}
-
-        {permissions.length === 0 ? (
-          <p className="text-color-secondary text-sm">
-            No permissions available to assign.
-          </p>
-        ) : (
-          <div
-            className="flex flex-column gap-2 overflow-y-auto"
-            style={{ maxHeight: "450px" }}
-          >
-            {permissions.map((permission) => (
-              <label
-                key={permission.id}
-                className="flex align-items-center gap-2 px-3 py-2 border-1 border-200 border-round cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={selected.includes(permission.id)}
-                  onChange={(event) =>
-                    handleCheckboxChange(
-                      permission.id,
-                      event.target.checked,
-                    )
-                  }
-                  className="cursor-pointer m-0 flex-shrink-0"
-                />
-
-                <span className="text-sm">
-                  {permission.permission_type}
-                </span>
-              </label>
-            ))}
-          </div>
-        )}
-
-        {permissions.length > 0 && (
-          <div className="flex justify-content-end mt-3">
-            <Button
-              disabled={assigning}
-              onClick={handleAssignPermissions}
+          ) : (
+            <div
+              className="flex flex-column gap-2 overflow-y-auto"
+              style={{ maxHeight: "450px" }}
             >
-              {assigning ? "Assigning..." : "Assign Permissions"}
-            </Button>
-          </div>
-        )}
+              {permissions.map((permission) => (
+                <label
+                  key={permission.id}
+                  className="flex align-items-center gap-2 px-3 py-2 border-1 border-200 border-round cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(permission.id)}
+                    onChange={(event) =>
+                      handleCheckboxChange(permission.id, event.target.checked)
+                    }
+                    className="cursor-pointer m-0 flex-shrink-0"
+                  />
+
+                  <span className="text-sm">{permission.permission_type}</span>
+                </label>
+              ))}
+            </div>
+          )}
+
+          {permissions.length > 0 && (
+            <div className="flex justify-content-end mt-3">
+              <Button disabled={assigning} onClick={handleAssignPermissions}>
+                {assigning ? "Assigning..." : "Assign Permissions"}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Guard>
   );
 }

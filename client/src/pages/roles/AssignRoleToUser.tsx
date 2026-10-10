@@ -7,7 +7,7 @@ import {
   ROLE_BY_ID,
   ASSIGN_ROLES_TO_USER,
 } from "../../services/Apis/Role";
-
+import { Guard } from "../Layout/Guard.tsx";
 interface Role {
   id: number;
   name: string;
@@ -110,75 +110,80 @@ export function AssignRoleToUser() {
 
   return (
     <>
-      <div className="p-4">
-        <div className="surface-card border-round shadow-2 p-3 mt-4">
-          <div className="flex justify-content-between align-items-center mb-3">
-            <div>
-              <h3 className="m-0">Assign Roles to User</h3>
+      <Guard
+        requiredPermission={["admin:assign-role"]}
+        fallback={<p>You do not have permission to view this page.</p>}
+      >
+        <div className="p-4">
+          <div className="surface-card border-round shadow-2 p-3 mt-4">
+            <div className="flex justify-content-between align-items-center mb-3">
+              <div>
+                <h3 className="m-0">Assign Roles to User</h3>
 
-              <p className="text-color-secondary mt-2 mb-0">
-                Select roles you want to assign to this user.
+                <p className="text-color-secondary mt-2 mb-0">
+                  Select roles you want to assign to this user.
+                </p>
+              </div>
+
+              <span className="text-green-500">{successMessage}</span>
+              <span className="text-red-500">{errorMessage}</span>
+
+              <span className="text-color-secondary">
+                {selected.length} selected
+              </span>
+            </div>
+
+            {roles.length === 0 ? (
+              <p className="text-color-secondary">
+                No roles available to assign.
               </p>
-            </div>
+            ) : (
+              <div className="flex flex-column gap-2">
+                {roles.map((role) => {
+                  const isSelected = selected.includes(role.id);
 
-            <span className="text-green-500">{successMessage}</span>
-            <span className="text-red-500">{errorMessage}</span>
+                  return (
+                    <label
+                      key={role.id}
+                      htmlFor={`role-${role.id}`}
+                      className="flex align-items-center gap-3 px-3 py-2 border-1 border-200 border-round cursor-pointer"
+                    >
+                      <input
+                        id={`role-${role.id}`}
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(event) =>
+                          handleCheckboxChange(role.id, event.target.checked)
+                        }
+                        className="cursor-pointer m-0 flex-shrink-0"
+                      />
 
-            <span className="text-color-secondary">
-              {selected.length} selected
-            </span>
+                      <div className="flex flex-column">
+                        <span className="font-medium">{role.name}</span>
+
+                        <span className="text-color-secondary text-sm">
+                          {role.description}
+                        </span>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+
+            {roles.length > 0 && (
+              <div className="flex justify-content-end mt-4">
+                <Button
+                  disabled={selected.length === 0}
+                  onClick={handleAssignUsers}
+                >
+                  Assign Roles
+                </Button>
+              </div>
+            )}
           </div>
-
-          {roles.length === 0 ? (
-            <p className="text-color-secondary">
-              No roles available to assign.
-            </p>
-          ) : (
-            <div className="flex flex-column gap-2">
-              {roles.map((role) => {
-                const isSelected = selected.includes(role.id);
-
-                return (
-                  <label
-                    key={role.id}
-                    htmlFor={`role-${role.id}`}
-                    className="flex align-items-center gap-3 px-3 py-2 border-1 border-200 border-round cursor-pointer"
-                  >
-                    <input
-                      id={`role-${role.id}`}
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={(event) =>
-                        handleCheckboxChange(role.id, event.target.checked)
-                      }
-                      className="cursor-pointer m-0 flex-shrink-0"
-                    />
-
-                    <div className="flex flex-column">
-                      <span className="font-medium">{role.name}</span>
-
-                      <span className="text-color-secondary text-sm">
-                        {role.description}
-                      </span>
-                    </div>
-                  </label>
-                );
-              })}
-            </div>
-          )}
-
-          {roles.length > 0 && (
-            <div className="flex justify-content-end mt-4">
-              <Button
-                disabled={selected.length === 0}
-                onClick={handleAssignUsers}
-              >
-                Assign Roles
-              </Button>
-            </div>
-          )}
         </div>
-      </div>
+      </Guard>
     </>
   );
 }

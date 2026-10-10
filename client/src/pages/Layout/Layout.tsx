@@ -12,6 +12,7 @@ import { Button } from "@primereact/ui/button";
 import { Menu } from "@primereact/ui/menu";
 import { Sidebar } from "@primereact/ui/sidebar";
 import { useAuth } from "../Layout/ContextProvider.tsx";
+import { Guard } from "./Guard.tsx";
 
 export function Layout() {
   const { logout, user } = useAuth();
@@ -38,74 +39,82 @@ export function Layout() {
                     <Sidebar.GroupLabel>Navigation</Sidebar.GroupLabel>
                     <Sidebar.GroupContent>
                       <Sidebar.Menu>
-                        
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/users")}
-                          >
-                            <Users />
-                            <span> Users </span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
-                        
-                        
-                         <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/company")}
-                          >
-                            <Users />
-                            <span>Company</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
+                        <Guard requiredPermission={["users:view"]}>
+                          <Sidebar.MenuItem>
+                            <Sidebar.MenuButton
+                              onClick={() => navigate("/users")}
+                            >
+                              <Users />
+                              <span> Users </span>
+                            </Sidebar.MenuButton>
+                          </Sidebar.MenuItem>
+                        </Guard>
 
-                        
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/customer")}
-                          >
-                            <Users />
-                            <span>Customer</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
+                        <Guard requiredPermission={["company:view"]}>
+                          <Sidebar.MenuItem>
+                            <Sidebar.MenuButton
+                              onClick={() => navigate("/company")}
+                            >
+                              <Users />
+                              <span>Company</span>
+                            </Sidebar.MenuButton>
+                          </Sidebar.MenuItem>
+                        </Guard>
 
+                        <Guard requiredPermission={["customer:view"]}>
+                          <Sidebar.MenuItem>
+                            <Sidebar.MenuButton
+                              onClick={() => navigate("/customer")}
+                            >
+                              <Users />
+                              <span>Customer</span>
+                            </Sidebar.MenuButton>
+                          </Sidebar.MenuItem>
+                        </Guard>
 
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/location")}
-                          >
-                            <Users />
-                            <span>Location</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
-                       
-                        
+                        <Guard requiredPermission={["location:view"]}>
+                          <Sidebar.MenuItem>
+                            <Sidebar.MenuButton
+                              onClick={() => navigate("/location")}
+                            >
+                              <Users />
+                              <span>Location</span>
+                            </Sidebar.MenuButton>
+                          </Sidebar.MenuItem>
+                        </Guard>
 
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/accommodation")}
-                          >
-                            <Users />
-                            <span>Accommodation</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
+                        <Guard requiredPermission={["accommodation:view"]}>
+                          <Sidebar.MenuItem>
+                            <Sidebar.MenuButton
+                              onClick={() => navigate("/accommodation")}
+                            >
+                              <Users />
+                              <span>Accommodation</span>
+                            </Sidebar.MenuButton>
+                          </Sidebar.MenuItem>
+                        </Guard>
 
+                        <Guard requiredPermission={["booking:view"]}>
+                          <Sidebar.MenuItem>
+                            <Sidebar.MenuButton
+                              onClick={() => navigate("/booking")}
+                            >
+                              <Users />
+                              <span>Booking</span>
+                            </Sidebar.MenuButton>
+                          </Sidebar.MenuItem>
+                        </Guard>
 
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/booking")}
-                          >
-                            <Users />
-                            <span>Booking</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
-                        <Sidebar.MenuItem>
-                          <Sidebar.MenuButton
-                            onClick={() => navigate("/roles")}
-                          >
-                            <Users />
-                            <span>Roles</span>
-                          </Sidebar.MenuButton>
-                        </Sidebar.MenuItem>
+                        <Guard requiredPermission={["role:view"]}>
+                          <Sidebar.MenuItem>
+                            <Sidebar.MenuButton
+                              onClick={() => navigate("/roles")}
+                            >
+                              <Users />
+                              <span>Roles</span>
+                            </Sidebar.MenuButton>
+                          </Sidebar.MenuItem>
+                        </Guard>
                       </Sidebar.Menu>
                     </Sidebar.GroupContent>
                   </Sidebar.Group>
