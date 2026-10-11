@@ -76,6 +76,7 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
         roles: verifiedUser.roles,
         permissions: verifiedUser.permissions,
       });
+      setCompanyId(parseInt(localStorage.getItem("companyId") || "0") || null);
 
       setIsAuthenticated(true);
     } catch (error) {
@@ -103,11 +104,12 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async () => {
-  await fetchUser();
+    await fetchUser();
   };
 
   const setCompany = (id: number) => {
     setCompanyId(id);
+    localStorage.setItem("companyId", id.toString());
   };
 
   const logout = () => {

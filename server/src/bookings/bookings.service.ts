@@ -42,6 +42,24 @@ export class BookingsService {
 
   }
 
+  async findAllByCompany(companyId: number, status?: number) {
+    const query = this.bookingRepo
+      .createQueryBuilder('booking')
+      .leftJoinAndSelect('booking.customer', 'customer')
+      .leftJoinAndSelect('booking.accommodation', 'accommodation')
+      .leftJoinAndSelect('booking.status', 'status')
+      .innerJoin(
+        'customer.customerCompanies',
+        'customerCompany',
+      )
+      .where('customerCompany.companyId = :companyId', { companyId });
+
+    if (status !== undefined && status !== null) {
+      query.andWhere('status.id = :status', { status });
+    }
+
+    return query.getMany();
+  }
 
   async findOne(id: number) {
     const booking = await this.bookingRepo.findOne({

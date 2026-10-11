@@ -11,11 +11,13 @@ import {
 } from "../../services/Apis/Booking";
 import { CUSTOMER_ALL } from "../../services/Apis/Customer";
 import { ALL_ACCOMMODATIONS } from "../../services/Apis/Accommodation";
+import { GET_COMPANY_CUSTOMERS } from "../../services/Apis/Company";
 import { useAuth } from "../../pages/Layout/ContextProvider";
 import { Guard } from "../Layout/Guard";
 type Customer = { id: number; name: string; email: string };
 type Accommodation = { id: number; name: string };
 type BookingStatus = { id: number; name: string };
+type CompanyCustomer = { Customer: Customer };
 
 function formatDateForInput(dateStr?: string) {
   if (!dateStr) return "";
@@ -24,12 +26,13 @@ function formatDateForInput(dateStr?: string) {
 }
 
 export function BookingAddEdit() {
-  const { companyId } = useAuth();
+  const { user, companyId } = useAuth();
+  const isAdmin = user?.roles?.includes("Admin") ?? false;
 
   const navigate = useNavigate();
   const location = useLocation();
   const booking = location.state?.booking;
-  console.log("company data:", companyId, booking);
+  console.log("company data:", companyId, booking, user);
 
   const [formData, setFormData] = useState({
     customer_id: "",
@@ -51,6 +54,19 @@ export function BookingAddEdit() {
     }
   }, [booking]);
 
+  const { data: companyCustomersData } = useQuery(GET_COMPANY_CUSTOMERS, {
+    variables: { id: companyId },
+    skip: isAdmin || !companyId,
+  }) as {
+    data:
+      | {
+          company: {
+            customerCompanies: CompanyCustomer[];
+          };
+        }
+      | undefined;
+  };
+
   const { data: customersData } = useQuery(CUSTOMER_ALL) as {
     data: { customerAll: Customer[] };
   };
@@ -62,6 +78,12 @@ export function BookingAddEdit() {
   const { data: statusesData } = useQuery(ALL_BOOKING_STATUSES) as {
     data: { bookingStatuses: BookingStatus[] };
   };
+
+  const customers: Customer[] = isAdmin
+    ? (customersData?.customerAll ?? [])
+    : (companyCustomersData?.company?.customerCompanies ?? []).map(
+        (relation) => relation.Customer,
+      );
 
   const [createBooking] = useMutation(CREATE_BOOKING);
   const [updateBooking] = useMutation(UPDATE_BOOKING);
@@ -81,6 +103,7 @@ export function BookingAddEdit() {
       status_id: parseInt(formData.status_id),
       check_in: new Date(formData.check_in),
       check_out: new Date(formData.check_out),
+      created_by: user?.sub,
     };
 
     if (input.check_in > input.check_out) {
@@ -146,7 +169,8 @@ export function BookingAddEdit() {
                 required
               >
                 <option value="">Select Customer</option>
-                {customersData?.customerAll?.map((c) => (
+
+                {customers.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name} ({c.email})
                   </option>

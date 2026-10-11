@@ -3,8 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@primereact/ui/button";
 import { DataTable } from "@primereact/ui/datatable";
 import { useMutation, useQuery } from "@apollo/client/react";
-import { ALL_BOOKINGS, DELETE_BOOKING } from "../../services/Apis/Booking";
+
+import {
+  ALL_BOOKINGS,
+  DELETE_BOOKING,
+  BOOKING_BY_COMPANY_ID,
+} from "../../services/Apis/Booking";
+
 import { Guard } from "../Layout/Guard";
+import { useAuth } from "../Layout/ContextProvider";
+
 type Customer = {
   id: number;
   name: string;
@@ -33,55 +41,99 @@ type Booking = {
 };
 
 export function Booking() {
+  const { user, companyId } = useAuth();
+  const isAdmin = user?.roles?.includes("Admin") ?? false;
+
   const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState("");
 
+  const status = selectedStatus === "" ? null : Number(selectedStatus);
+
   const [deleteBooking] = useMutation(DELETE_BOOKING);
 
-  const { error, data, refetch } = useQuery(ALL_BOOKINGS, {
-    variables: {
-      status: selectedStatus === "" ? null : Number(selectedStatus),
-    },
+  const {
+    error: allError,
+    data: allData,
+    refetch: refetchAll,
+  } = useQuery(ALL_BOOKINGS, {
+    variables: { status },
+    skip: !isAdmin,
     fetchPolicy: "network-only",
   }) as {
-    error: Error | undefined;
-    data: { bookings: Booking[] } | undefined;
-    refetch: (variables?: { status: number | null }) => Promise<unknown>;
+    data: { bookings: Booking[] };
+    error: any;
+    refetch: (variables?: { status: number | null }) => Promise<any>;
   };
 
-  const bookings = data?.bookings ?? [];
+  const {
+    error: companyError,
+    data: companyData,
+    refetch: refetchCompany,
+  } = useQuery(BOOKING_BY_COMPANY_ID, {
+    variables: {
+      companyId,
+      status,
+    },
+    skip: isAdmin || !companyId,
+    fetchPolicy: "network-only",
+  }) as {
+    data: { bookingsByCompany: Booking[] };
+    error: any;
+    refetch: (variables?: {
+      companyId: number;
+      status: number | null;
+    }) => Promise<any>;
+  };
+
+  const bookings: Booking[] = isAdmin
+    ? (allData?.bookings ?? [])
+    : (companyData?.bookingsByCompany ?? []);
+
+  const error = isAdmin ? allError : companyError;
 
   async function handleStatusChange(value: string) {
     setSelectedStatus(value);
 
-    await refetch({
-      status: value === "" ? null : Number(value),
-    });
-  }
+    const nextStatus = value === "" ? null : Number(value);
 
-  async function handleDelete(id: number) {
-    if (window.confirm("Are you sure you want to delete this booking?")) {
-      try {
-        await deleteBooking({
-          variables: { id },
-          refetchQueries: [
-            {
-              query: ALL_BOOKINGS,
-              variables: {
-                status: selectedStatus === "" ? null : Number(selectedStatus),
-              },
-            },
-          ],
-          awaitRefetchQueries: true,
-        });
-      } catch (err) {
-        console.error("Failed to delete booking:", err);
-        alert("Failed to delete booking.");
-      }
+    if (isAdmin) {
+      await refetchAll({ status: nextStatus });
+    } else if (companyId) {
+      await refetchCompany({
+        companyId,
+        status: nextStatus,
+      });
     }
   }
 
-  if (error) return <p className="p-4 text-red-500">Error: {error.message}</p>;
+  async function handleDelete(id: number) {
+    if (!window.confirm("Are you sure you want to delete this booking?")) {
+      return;
+    }
+
+    try {
+      await deleteBooking({
+        variables: { id },
+      });
+
+      if (isAdmin) {
+        await refetchAll({ status });
+      } else if (companyId) {
+        await refetchCompany({ companyId, status });
+      }
+    } catch (err) {
+      console.error("Failed to delete booking:", err);
+      alert("Failed to delete booking.");
+    }
+  }
+
+  if (error) {
+    return <p className="p-4 text-red-500">Error: {error.message}</p>;
+  }
+
+  if (!isAdmin && !companyId) {
+    return <p className="p-4">No company is associated with your account.</p>;
+  }
 
   return (
     <Guard
@@ -104,7 +156,7 @@ export function Booking() {
 
         <div className="surface-card border-round shadow-2 p-3">
           <div className="flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-            <h3 className="m-0">All Bookings</h3>
+            <h3 className="m-0">Bookings</h3>
 
             <div className="flex align-items-center gap-2">
               <label htmlFor="bookingStatus" className="font-medium">
@@ -133,18 +185,23 @@ export function Booking() {
                     <DataTable.THeadCell>
                       <DataTable.THeadTitle>No.</DataTable.THeadTitle>
                     </DataTable.THeadCell>
+
                     <DataTable.THeadCell>
                       <DataTable.THeadTitle>Customer</DataTable.THeadTitle>
                     </DataTable.THeadCell>
+
                     <DataTable.THeadCell>
                       <DataTable.THeadTitle>Accommodation</DataTable.THeadTitle>
                     </DataTable.THeadCell>
+
                     <DataTable.THeadCell>
                       <DataTable.THeadTitle>Check In</DataTable.THeadTitle>
                     </DataTable.THeadCell>
+
                     <DataTable.THeadCell>
                       <DataTable.THeadTitle>Check Out</DataTable.THeadTitle>
                     </DataTable.THeadCell>
+
                     <DataTable.THeadCell>
                       <DataTable.THeadTitle>Status</DataTable.THeadTitle>
                     </DataTable.THeadCell>
@@ -163,55 +220,61 @@ export function Booking() {
                   {({ item, index }: { item: Booking; index: number }) => (
                     <DataTable.Row key={item.id}>
                       <DataTable.Cell>{index + 1}</DataTable.Cell>
+
                       <DataTable.Cell>
                         {item.customer?.name ?? "N/A"}
                       </DataTable.Cell>
+
                       <DataTable.Cell>
                         {item.accommodation?.name ?? "N/A"}
                       </DataTable.Cell>
+
                       <DataTable.Cell>
                         {item.check_in
                           ? new Date(item.check_in).toLocaleDateString()
                           : "N/A"}
                       </DataTable.Cell>
+
                       <DataTable.Cell>
                         {item.check_out
                           ? new Date(item.check_out).toLocaleDateString()
                           : "N/A"}
                       </DataTable.Cell>
+
                       <DataTable.Cell>
                         {item.status?.name ?? "N/A"}
                       </DataTable.Cell>
+
                       <DataTable.Cell>
-
                         <div className="flex gap-2">
-
                           <Guard requiredPermission={["booking:update"]}>
-                          <Button
-                            severity="info"
-                            size="small"
-                            rounded
-                            text
-                            onClick={() =>
-                              navigate("/booking-add-edit", {
-                                state: { booking: item },
-                              })
-                            }
-                          >
-                            Edit
-                          </Button>
+                            <Button
+                              label="Edit"
+                              severity="info"
+                              size="small"
+                              rounded
+                              text
+                              onClick={() =>
+                                navigate("/booking-add-edit", {
+                                  state: { booking: item },
+                                })
+                              }
+                            >
+                              Edit
+                            </Button>
                           </Guard>
 
                           <Guard requiredPermission={["booking:delete"]}>
-                          <Button
-                            severity="danger"
-                            size="small"
-                            rounded
-                            text
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            Delete
-                          </Button>
+                            <Button
+                              label="Delete"
+                              severity="danger"
+                              size="small"
+                              rounded
+                              text
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              Delete
+                            </Button>
                           </Guard>
                         </div>
                       </DataTable.Cell>
@@ -221,6 +284,12 @@ export function Booking() {
               </DataTable.Table>
             </DataTable.TableContainer>
           </DataTable.Root>
+
+          {bookings.length === 0 && (
+            <p className="text-center text-color-secondary mt-3">
+              No bookings found.
+            </p>
+          )}
         </div>
       </div>
     </Guard>

@@ -5,9 +5,14 @@ import { Button } from "primereact/button";
 import { useMutation } from "@apollo/client/react";
 import { CREATE_CUSTOMER, UPDATE_CUSTOMER } from "../../services/Apis/Customer";
 import { Guard } from "../Layout/Guard";
+import { useAuth } from "../Layout/ContextProvider";
 export function CustomerAddEdit() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { user } = useAuth();
+
+  const isAdmin = user?.roles?.includes("Admin") ?? false;
 
   const customer = location.state?.customer;
   const companyId = location.state?.companyId;
@@ -77,7 +82,7 @@ export function CustomerAddEdit() {
 
       if (response.data) {
         alert("Customer created successfully!");
-        if (companyId) {
+        if (companyId && isAdmin) {
           navigate("/company");
         } else {
           navigate("/customer");

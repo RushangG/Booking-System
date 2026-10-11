@@ -19,6 +19,14 @@ export class BookingsResolver {
     return this.bookingsService.findAll(status);
   }
 
+  @Query(() => [Booking], { name: 'bookingsByCompany' })
+  findAllByCompany(
+    @Args("companyId", { type: () => Int }) companyId: number,
+    @Args("status", { type: () => Int, nullable: true }) status?: number,
+  ) {
+    return this.bookingsService.findAllByCompany(companyId, status);
+  }
+
   @Query(() => Booking, { name: 'booking' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.bookingsService.findOne(id);

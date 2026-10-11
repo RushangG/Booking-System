@@ -130,7 +130,7 @@ export function Layout() {
                           >
                             <Avatar.Fallback>U</Avatar.Fallback>
                           </Avatar.Root>
-                          <span>User</span>
+                          <span>{user?.email || "user@gmail.com"}</span>
                           <ChevronDown className="ml-auto" />
                         </Menu.Trigger>
                         <Menu.Portal>
@@ -141,7 +141,9 @@ export function Layout() {
                           >
                             <Menu.Popup>
                               <Menu.List>
-                                <Menu.Label>user@gmail.com</Menu.Label>
+                                <Menu.Label>
+                                  {user?.email || "user@gmail.com"}
+                                </Menu.Label>
                                 <Menu.Separator />
                                 <Menu.Item onClick={() => navigate("/setting")}>
                                   <Cog />
