@@ -15,7 +15,7 @@ export class AuthService {
     private configService: ConfigService,
     @InjectRepository(AuthSessionRepository)
     private authSessionRepository: AuthSessionRepository,
-  ) {}
+  ) { }
 
   async login(authLoginInput: AuthLoginInput) {
     let user = await this.usersService.findByEmail(authLoginInput.email);
@@ -70,12 +70,11 @@ export class AuthService {
       throw new BadRequestException('Email already in use');
     }
 
-    const hashedPassword = await bcrypt.hash(authRegisterInput.password, 10);
 
     let newUser = await this.usersService.create({
       name: authRegisterInput.name,
       email: authRegisterInput.email,
-      password: hashedPassword,
+      password: authRegisterInput.password,
     });
 
     if (!newUser) {

@@ -6,6 +6,7 @@ import {
   ManyToOne,
   CreateDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { UsersHasRoles } from '../../users_has_roles/entities/users_has_roles.entity';
 import { CompaniesHasUsers } from '../../companies-has-users/entities/companies-has-users.entity';
@@ -33,9 +34,7 @@ export class User {
   @Field()
   password: string;
 
-  @OneToMany(() => UsersHasRoles, (usersHasRoles) => usersHasRoles.User, {
-    eager: true,
-  })
+  @OneToMany(() => UsersHasRoles, (usersHasRoles) => usersHasRoles.User)
   @Field(() => [UsersHasRoles], { nullable: true })
   usersHasRoles: UsersHasRoles[];
 

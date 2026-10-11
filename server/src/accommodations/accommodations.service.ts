@@ -98,6 +98,6 @@ export class AccommodationsService {
       throw new NotFoundException(`Accommodation with ID ${id} not found`);
     }
     await this.accommodationRepo.delete(id);
-    return accommodation;
+    return `accommodation with ID ${id} has been deleted`;
   }
 }

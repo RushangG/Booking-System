@@ -14,14 +14,18 @@ import { RolesHasPermissions } from './roles_has_permissions/entities/roles_has_
 import { CustomerCompany } from './customer-companies/entities/customer-company.entity';
 import { AuthSession } from './auth/entities/auth-session.entity';
 import { CompaniesHasUsers } from './companies-has-users/entities/companies-has-users.entity';
+import env from 'dotenv';
+env.config();
+
+
 
 export const AppDataSource = new DataSource({
-  type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'postgres',
-  password: 'postgres',
-  database: 'bookingSystemDB',
+  type: process.env.DATABASE_TYPE as any,
+  host: process.env.DATABASE_HOST,
+  port: parseInt(process.env.DATABASE_PORT || '5432'),
+  username: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
 
   synchronize: false,
   logging: true,

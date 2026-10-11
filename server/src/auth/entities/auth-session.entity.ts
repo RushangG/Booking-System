@@ -13,7 +13,10 @@ export class AuthSession {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.authSessions)
+  @ManyToOne(() => User, (user) => user.authSessions,
+    {
+      onDelete: 'CASCADE',
+    })
   user: User;
 
   @Column()

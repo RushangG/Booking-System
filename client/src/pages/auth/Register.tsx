@@ -31,6 +31,11 @@ export function Register() {
   const handleRegister = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if(registerData.password !== registerData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
     const response = await register({
       variables: {
         name: registerData.name,

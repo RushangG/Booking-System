@@ -10,11 +10,15 @@ export class UsersHasRoles {
   @Field(() => Int)
   id: number;
 
-  @ManyToOne(() => User, (user) => user.usersHasRoles)
+  @ManyToOne(() => User, (user) => user.usersHasRoles, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => User, { nullable: true })
   User: User;
 
-  @ManyToOne(() => Role, (role) => role.usersHasRoles)
+  @ManyToOne(() => Role, (role) => role.usersHasRoles, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Role, { nullable: true })
   Role: Role;
 }

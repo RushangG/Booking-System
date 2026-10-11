@@ -20,11 +20,15 @@ export class CompaniesHasUsers {
   id: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.companiesHasUsers)
+  @ManyToOne(() => User, (user) => user.companiesHasUsers, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @Field(() => Company)
-  @ManyToOne(() => Company, (company) => company.companiesHasUsers)
+  @ManyToOne(() => Company, (company) => company.companiesHasUsers, {
+    onDelete: 'CASCADE',
+  })
   company: Company;
 
   @CreateDateColumn()

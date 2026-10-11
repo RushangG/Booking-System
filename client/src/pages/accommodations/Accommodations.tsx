@@ -50,13 +50,29 @@ export function Accommodation() {
 
   const accommodations: Accommodation[] = data?.accommodations;
 
-  function handleDelete(id: number) {
-    if (window.confirm("Are you sure you want to delete this accommodation?")) {
-      deleteAccommodation({
+  async function handleDelete(id: number) {
+    if (
+      !window.confirm("Are you sure you want to delete this accommodation?")
+    ) {
+      return;
+    }
+
+    try {
+      await deleteAccommodation({
         variables: { id },
-        refetchQueries: [{ query: ALL_ACCOMMODATIONS }],
+        refetchQueries: [
+          {
+            query: ALL_ACCOMMODATIONS,
+            variables: { SearchLocation: searchTerm },
+          },
+        ],
         awaitRefetchQueries: true,
       });
+    } catch (error) {
+      console.error("Error deleting accommodation:", error);
+      alert(
+        `Failed to delete accommodation. Please try again later. accommodation associated with other data cannot be deleted.`,
+      );
     }
   }
 
@@ -162,7 +178,9 @@ export function Accommodation() {
                         <DataTable.Cell>
                           {item.location_id?.city}, {item.location_id?.country}
                         </DataTable.Cell>
-                        <DataTable.Cell>${item.price_per_night}</DataTable.Cell>
+                        <DataTable.Cell>
+                          {item.price_per_night} Rs
+                        </DataTable.Cell>
                         <DataTable.Cell>
                           <div className="flex gap-2">
                             <Guard

@@ -31,11 +31,8 @@ export function Customer() {
   const { user, companyId } = useAuth();
   const navigate = useNavigate();
 
-  
-
   const isAdmin = user?.roles?.includes("Admin") ?? false;
 
-  
   const {
     loading: allLoading,
     error: allError,
@@ -48,7 +45,6 @@ export function Customer() {
     error: any;
   };
 
- 
   const {
     loading: companyLoading,
     error: companyError,
@@ -63,15 +59,12 @@ export function Customer() {
   };
 
   let companyName = companyData?.company?.name;
- 
 
   const [deleteCustomer] = useMutation(DELETE_CUSTOMER);
 
   if (allLoading || companyLoading) return <p>Loading...</p>;
   if (allError || companyError)
     return <p>Error: {allError?.message || companyError?.message}</p>;
-
-
 
   const customers: Customer[] = isAdmin
     ? (allData?.customerAll ?? [])
@@ -99,7 +92,7 @@ export function Customer() {
       });
     } catch (err) {
       console.error("Failed to delete customer:", err);
-      window.alert("Failed to delete customer.");
+      window.alert("Failed to delete customer customer use in other records.");
     }
   }
 

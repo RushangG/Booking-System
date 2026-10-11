@@ -6,7 +6,7 @@ import { UpdateAccommodationInput } from './dto/update-accommodation.input';
 
 @Resolver(() => Accommodation)
 export class AccommodationsResolver {
-  constructor(private readonly accommodationsService: AccommodationsService) {}
+  constructor(private readonly accommodationsService: AccommodationsService) { }
 
   @Mutation(() => Accommodation)
   createAccommodation(
@@ -37,7 +37,7 @@ export class AccommodationsResolver {
     );
   }
 
-  @Mutation(() => Accommodation)
+  @Mutation(() => String)
   removeAccommodation(@Args('id', { type: () => Int }) id: number) {
     return this.accommodationsService.remove(id);
   }

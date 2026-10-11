@@ -41,7 +41,7 @@ export function Location() {
       });
     } catch (err) {
       console.error("Location delete failed:", err);
-      alert(err instanceof Error ? err.message : "Failed to delete location.");
+      alert(err instanceof Error ? "Location used by other data cannot be deleted." : "Failed to delete location.");
     }
   }
 

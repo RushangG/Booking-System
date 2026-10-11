@@ -11,11 +11,15 @@ export class CustomerCompany {
   @Field(() => Int)
   id: number;
 
-  @ManyToOne(() => Customer, (customer) => customer.customerCompanies)
+  @ManyToOne(() => Customer, (customer) => customer.customerCompanies, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Customer, { nullable: true })
   Customer: Customer;
 
-  @ManyToOne(() => Company, (company) => company.customerCompanies)
+  @ManyToOne(() => Company, (company) => company.customerCompanies, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => Company, { nullable: true })
   Company: Company;
 }

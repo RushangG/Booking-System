@@ -10,11 +10,11 @@ export class RolesHasPermissions {
   @Field(() => Int)
   id: number;
 
-  @ManyToOne(() => Role, (role) => role.rolesHasPermissions)
+  @ManyToOne(() => Role, (role) => role.rolesHasPermissions )
   @Field(() => Role, { nullable: true })
   Role: Role;
 
   @ManyToOne(() => Permission, (permission) => permission.rolesHasPermissions)
   @Field(() => Permission, { nullable: true })
-  Permission: Permission;
+  Permission: Permission; 
 }

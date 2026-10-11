@@ -9,11 +9,11 @@ export class UsersHasRolesService {
   constructor(
     @InjectRepository(UsersHasRolesRepository)
     private readonly usersHasRolesRepository: UsersHasRolesRepository,
-  ) {}
+  ) { }
 
   async assignRolesToUser(userId: number, roleIds: number[]) {
     // Delete existing roles 
-    this.usersHasRolesRepository.delete({ User: { id: userId } });
+    await this.usersHasRolesRepository.delete({ User: { id: userId } });
 
     // Create new user-role associations
     const newUserRoles = roleIds.map((roleId) => {

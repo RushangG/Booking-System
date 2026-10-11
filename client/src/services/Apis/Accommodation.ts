@@ -49,9 +49,7 @@ export const UPDATE_ACCOMMODATION = gql`
 
 export const DELETE_ACCOMMODATION = gql`
   mutation RemoveAccommodation($id: Int!) {
-    removeAccommodation(id: $id) {
-      id
-    }
+    removeAccommodation(id: $id) 
   }
 `;
 
