@@ -86,7 +86,7 @@ export const router = createBrowserRouter([
             path: "/location-add-edit",
             element: <LocationAddEdit />,
           },
-          
+
           {
             path: "/company-add-edit",
             element: <CompanyAddEdit />,

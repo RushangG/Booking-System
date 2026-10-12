@@ -122,6 +122,12 @@ export class UsersService {
     oldPassword: string,
     newPassword: string,
   ) {
+    if (oldPassword === newPassword) {
+      throw new BadRequestException(
+        'New password cannot be the same as the old password',
+      );
+    }
+
     const user = await this.usersRepo.findOneBy({ id: userId });
 
     if (!user) {

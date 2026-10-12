@@ -23,7 +23,13 @@ export function Setting() {
     setError(null);
     setSuccess(null);
     // Handle form submission logic here
-    console.log("Form submitted");
+
+    if (oldPassword === newPassword) {
+      setError("New password cannot be the same as the old password.");
+      return;
+    }
+
+   
     try {
       let response = await resetPassword({
         variables: {

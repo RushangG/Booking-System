@@ -31,14 +31,14 @@ export function Customer() {
   const { user, companyId } = useAuth();
   const navigate = useNavigate();
 
-  const isAdmin = user?.roles?.includes("Admin") ?? false;
+  const isSuperAdmin = user?.roles?.includes("Super Admin") ?? false;
 
   const {
     loading: allLoading,
     error: allError,
     data: allData,
   } = useQuery(CUSTOMER_ALL, {
-    skip: !isAdmin,
+    skip: !isSuperAdmin,
   }) as {
     data: { customerAll: Customer[] };
     loading: boolean;
@@ -51,7 +51,7 @@ export function Customer() {
     data: companyData,
   } = useQuery(GET_COMPANY_CUSTOMERS, {
     variables: { id: companyId },
-    skip: isAdmin || !companyId,
+    skip: isSuperAdmin || !companyId,
   }) as {
     data: companyData;
     loading: boolean;
@@ -66,7 +66,7 @@ export function Customer() {
   if (allError || companyError)
     return <p>Error: {allError?.message || companyError?.message}</p>;
 
-  const customers: Customer[] = isAdmin
+  const customers: Customer[] = isSuperAdmin
     ? (allData?.customerAll ?? [])
     : (companyData?.company?.customerCompanies ?? []).map(
         (relation: CompanyCustomer) => relation.Customer,
@@ -80,7 +80,7 @@ export function Customer() {
     try {
       await deleteCustomer({
         variables: { id },
-        refetchQueries: isAdmin
+        refetchQueries: isSuperAdmin
           ? [{ query: CUSTOMER_ALL }]
           : [
               {
@@ -96,7 +96,7 @@ export function Customer() {
     }
   }
 
-  if (!isAdmin && !companyId) {
+  if (!isSuperAdmin && !companyId) {
     return (
       <p>No company selected. Please select a company to view its customers.</p>
     );
@@ -119,7 +119,7 @@ export function Customer() {
             <Button
               label="Add Customer"
               onClick={() => {
-                isAdmin
+                isSuperAdmin
                   ? navigate("/customer-add-edit")
                   : navigate("/customer-add-edit", {
                       state: {

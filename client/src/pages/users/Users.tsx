@@ -30,7 +30,7 @@ export function Users() {
     return <p>Error: {error.message}</p>;
   }
 
-  console.log("Users data:", data.users);
+
 
   const users: User[] = data.users.map((user: User) => ({
     id: user.id,

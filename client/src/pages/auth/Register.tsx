@@ -48,7 +48,7 @@ export function Register() {
       alert("Registration successful! Please login.");
       navigate("/login");
     }
-    console.log(registerData);
+   
   };
 
   return (

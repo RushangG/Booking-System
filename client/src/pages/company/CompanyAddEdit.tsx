@@ -12,7 +12,7 @@ export function CompanyAddEdit() {
 
   const company = location.state?.company;
 
-  console.log("Company data:", company);
+  
 
   useEffect(() => {
     if (company) {
@@ -79,7 +79,7 @@ export function CompanyAddEdit() {
       alert("Company created successfully!");
       navigate("/company");
     }
-    console.log(formData);
+   
   };
 
   return (

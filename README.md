@@ -45,4 +45,11 @@ npm install
 npm run dev
 
 
+##### login 
+
+email : admin@gmail.com 
+password : admin123
+
+
+
 

@@ -45,7 +45,7 @@ export function ContextProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      console.log("Checking access token...");
+      
 
       const VERIFY_ACCESS_TOKEN = gql`
         mutation VerifyAccessToken($accessToken: String!) {

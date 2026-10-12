@@ -36,8 +36,7 @@ export function CompanySelectList() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  let isAdmin = user?.roles?.includes("Admin") ?? false;
-
+  let isSuperAdmin = user?.roles?.includes("Super Admin") ?? false;
 
   const companies = data.user.companiesHasUsers
     .map((c: IuserCompany) => c.company)
@@ -125,7 +124,7 @@ export function CompanySelectList() {
                             onClick={() => {
                               setCompany(item.id);
 
-                              if (isAdmin) {
+                              if (isSuperAdmin) {
                                 navigate("/users");
                               } else {
                                 navigate("/customer", {

@@ -12,15 +12,11 @@ export function CustomerAddEdit() {
 
   const { user } = useAuth();
 
-  const isAdmin = user?.roles?.includes("Admin") ?? false;
+  const isSuperAdmin = user?.roles?.includes("Super Admin") ?? false;
 
   const customer = location.state?.customer;
   const companyId = location.state?.companyId;
   const companyName = location.state?.companyName;
-
-  console.log("Company ID:", companyId);
-  console.log("Company Name:", companyName);
-  console.log("Customer data:", customer);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -82,7 +78,7 @@ export function CustomerAddEdit() {
 
       if (response.data) {
         alert("Customer created successfully!");
-        if (companyId && isAdmin) {
+        if (companyId && isSuperAdmin) {
           navigate("/company");
         } else {
           navigate("/customer");

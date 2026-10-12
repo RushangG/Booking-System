@@ -42,7 +42,7 @@ type Booking = {
 
 export function Booking() {
   const { user, companyId } = useAuth();
-  const isAdmin = user?.roles?.includes("Admin") ?? false;
+  const isSuperAdmin = user?.roles?.includes("Super Admin") ?? false;
 
   const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -57,7 +57,7 @@ export function Booking() {
     refetch: refetchAll,
   } = useQuery(ALL_BOOKINGS, {
     variables: { status },
-    skip: !isAdmin,
+    skip: !isSuperAdmin,
     fetchPolicy: "network-only",
   }) as {
     data: { bookings: Booking[] };
@@ -74,7 +74,7 @@ export function Booking() {
       companyId,
       status,
     },
-    skip: isAdmin || !companyId,
+    skip: isSuperAdmin || !companyId,
     fetchPolicy: "network-only",
   }) as {
     data: { bookingsByCompany: Booking[] };
@@ -85,18 +85,18 @@ export function Booking() {
     }) => Promise<any>;
   };
 
-  const bookings: Booking[] = isAdmin
+  const bookings: Booking[] = isSuperAdmin
     ? (allData?.bookings ?? [])
     : (companyData?.bookingsByCompany ?? []);
 
-  const error = isAdmin ? allError : companyError;
+  const error = isSuperAdmin ? allError : companyError;
 
   async function handleStatusChange(value: string) {
     setSelectedStatus(value);
 
     const nextStatus = value === "" ? null : Number(value);
 
-    if (isAdmin) {
+    if (isSuperAdmin) {
       await refetchAll({ status: nextStatus });
     } else if (companyId) {
       await refetchCompany({
@@ -116,7 +116,7 @@ export function Booking() {
         variables: { id },
       });
 
-      if (isAdmin) {
+      if (isSuperAdmin) {
         await refetchAll({ status });
       } else if (companyId) {
         await refetchCompany({ companyId, status });
@@ -131,7 +131,7 @@ export function Booking() {
     return <p className="p-4 text-red-500">Error: {error.message}</p>;
   }
 
-  if (!isAdmin && !companyId) {
+  if (!isSuperAdmin && !companyId) {
     return <p className="p-4">No company is associated with your account.</p>;
   }
 

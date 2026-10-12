@@ -63,32 +63,31 @@ export const ALL_BOOKING_STATUSES = gql`
 `;
 
 export const BOOKING_BY_COMPANY_ID = gql`
-query BookingsByCompany($companyId: Int!, $status: Int) {
+  query BookingsByCompany($companyId: Int!, $status: Int) {
     bookingsByCompany(companyId: $companyId, status: $status) {
+      id
+      created_by
+      check_in
+      check_out
+      createdAt
+      customer {
         id
-        created_by
-        check_in
-        check_out
+        name
+        email
+        phone
+      }
+      accommodation {
+        id
+        name
+        description
+        price_per_night
         createdAt
-        customer {
-            id
-            name
-            email
-            phone
-        }
-        accommodation {
-            id
-            name
-            description
-            price_per_night
-            createdAt
-        }
-        status {
-            id
-            name
-            createdAt
-        }
+      }
+      status {
+        id
+        name
+        createdAt
+      }
     }
-}
+  }
 `;
-

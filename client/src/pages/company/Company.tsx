@@ -24,7 +24,7 @@ export function Company() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  console.log("Company data:", data.companies);
+ 
 
   const companies: Company[] = data.companies.map((company: Company) => ({
     id: company.id,

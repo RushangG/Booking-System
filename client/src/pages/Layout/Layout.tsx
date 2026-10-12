@@ -36,7 +36,9 @@ export function Layout() {
               <Sidebar.Panel>
                 <Sidebar.Content>
                   <Sidebar.Group>
+                    
                     <Sidebar.GroupLabel>Navigation</Sidebar.GroupLabel>
+
                     <Sidebar.GroupContent>
                       <Sidebar.Menu>
                         <Guard requiredPermission={["users:view"]}>
@@ -120,7 +122,17 @@ export function Layout() {
                   </Sidebar.Group>
                 </Sidebar.Content>
                 <Sidebar.Footer>
+               
+                   
+                       <Sidebar.MenuButton
+                        onClick={() => navigate("/company-select-list")}
+                      >
+                        <span> Company Change </span>
+                     
+                      </Sidebar.MenuButton>
+                
                   <Sidebar.Menu>
+                   
                     <Sidebar.MenuItem>
                       <Menu.Root className="w-full">
                         <Menu.Trigger as={Sidebar.MenuButton} className="p-1!">

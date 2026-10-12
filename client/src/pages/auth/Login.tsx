@@ -25,10 +25,7 @@ export function Login() {
   async function handleLogin(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    console.log({
-      email,
-      password,
-    });
+    
 
     try {
       const result = (await login({
@@ -37,7 +34,7 @@ export function Login() {
           password,
         },
       })) as { data: LoginResponse | undefined };
-      console.log("login result", result.data);
+    
 
       if (result.data) { 
         localStorage.setItem("accessToken", result.data.login.accessToken);

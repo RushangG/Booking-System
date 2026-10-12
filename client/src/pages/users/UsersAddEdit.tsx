@@ -15,7 +15,7 @@ export function UsersAddEdit() {
 
   const user = location.state?.user;
 
-  console.log("User data:", user);
+  
 
   const [formData, setFormData] = useState({
     name: "",

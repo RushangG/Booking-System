@@ -27,12 +27,11 @@ function formatDateForInput(dateStr?: string) {
 
 export function BookingAddEdit() {
   const { user, companyId } = useAuth();
-  const isAdmin = user?.roles?.includes("Admin") ?? false;
+  const isSuperAdmin = user?.roles?.includes("Super Admin") ?? false;
 
   const navigate = useNavigate();
   const location = useLocation();
   const booking = location.state?.booking;
-  console.log("company data:", companyId, booking, user);
 
   const [formData, setFormData] = useState({
     customer_id: "",
@@ -56,7 +55,7 @@ export function BookingAddEdit() {
 
   const { data: companyCustomersData } = useQuery(GET_COMPANY_CUSTOMERS, {
     variables: { id: companyId },
-    skip: isAdmin || !companyId,
+    skip: isSuperAdmin || !companyId,
   }) as {
     data:
       | {
@@ -79,7 +78,7 @@ export function BookingAddEdit() {
     data: { bookingStatuses: BookingStatus[] };
   };
 
-  const customers: Customer[] = isAdmin
+  const customers: Customer[] = isSuperAdmin
     ? (customersData?.customerAll ?? [])
     : (companyCustomersData?.company?.customerCompanies ?? []).map(
         (relation) => relation.Customer,
